@@ -1,6 +1,6 @@
 package com.beside.daldal.domain.auth.controller
 
-import com.beside.daldal.domain.auth.dto.LoginDTO
+import com.beside.daldal.domain.auth.dto.TokenResponseDTO
 import com.beside.daldal.domain.auth.service.AuthService
 import com.beside.daldal.domain.member.dto.MemberLoginDTO
 import org.springframework.http.ResponseEntity
@@ -13,23 +13,23 @@ import org.springframework.web.bind.annotation.RequestMapping
 @RequestMapping("/api/v1")
 class AuthController(
     private val authService: AuthService
-){
+) {
 
     @PostMapping("/login")
-    fun login(@RequestBody  dto : MemberLoginDTO) : ResponseEntity<LoginDTO> = ResponseEntity.ok(authService.login(dto))
+    fun login(@RequestBody dto: MemberLoginDTO): ResponseEntity<TokenResponseDTO> = ResponseEntity.ok(authService.login(dto))
 
     @PostMapping("/logout")
-    fun logout(){
+    fun logout() {
 
     }
 
     @PostMapping("/signout")
-    fun signOut(){
+    fun signOut() {
 
     }
 
     @PostMapping("/reissue")
-    fun reissue(){
+    fun reissue() {
 
     }
 }

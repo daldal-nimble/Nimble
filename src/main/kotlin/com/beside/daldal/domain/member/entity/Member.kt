@@ -10,5 +10,12 @@ class Member(
     var uid:String,//provider
     var loginType : LoginType,
     var email:String,
-    var username :String? = null
-)
+    var username :String? = null,
+
+    // role
+    var authrity : Authority = Authority.ROLE_USER
+) {
+    enum class Authority {
+        ROLE_USER, ROLE_ADMIN
+    }
+}
