@@ -7,10 +7,11 @@ import org.springframework.data.mongodb.core.mapping.Document
 class Member(
     @Id
     var id:String? = null,
-    var uid:String,//provider
-    var loginType : LoginType,
-    var email:String,
+    var loginType: LoginType,
+    var email: String,
     var username :String? = null,
+    var nickname :String? = null,
+    var gender :String? = null,
 
     // role
     var authrity : Authority = Authority.ROLE_USER

@@ -19,25 +19,29 @@ class AuthService(
 ) {
     @Transactional
     fun login(dto: MemberLoginDTO): TokenResponseDTO {
-        val member = memberRepository.findByUid(dto.uid)
+        val member = memberRepository.findByEmail(dto.email)
 
         // member가 없으면 생성
         if (member == null) {
             memberService.create(
                 MemberCreateDTO(
-                    dto.uid,
-                    dto.email,
-                    dto.loginType
+                    dto.loginType,
+                    dto.email
                 )
             )
-//            return TokenResponseDTO("", "", 0L, 0L)
         }
         // token generate
 
+//        return jwtTokenProvider.generateTokenDto(
+//            UsernamePasswordAuthenticationToken(
+//                dto.uid, "",
+//                listOf(SimpleGrantedAuthority("ROLE_USER"))
+//            )
+//        )
+
         return jwtTokenProvider.generateTokenDto(
             UsernamePasswordAuthenticationToken(
-                dto.uid, "",
-                listOf(SimpleGrantedAuthority("ROLE_USER"))
+                dto.email, "", listOf(SimpleGrantedAuthority("ROLE_USER"))
             )
         )
 

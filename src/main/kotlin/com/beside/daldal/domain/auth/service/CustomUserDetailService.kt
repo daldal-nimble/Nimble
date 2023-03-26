@@ -17,12 +17,12 @@ class CustomUserDetailService(
 ) : UserDetailsService {
     @Transactional
     override fun loadUserByUsername(username: String): UserDetails {
-        val member: Member = memberRepository.findByUid(username) ?: throw MemberNotFoundException()
+        val member: Member = memberRepository.findByEmail(username) ?: throw MemberNotFoundException()
         return createUserDetails(member)
     }
 
     private fun createUserDetails(member: Member): UserDetails {
         val grantedAuthority = SimpleGrantedAuthority(member.authrity.toString())
-        return User(member.uid, "", Collections.singleton(grantedAuthority))
+        return User(member.email, "", Collections.singleton(grantedAuthority))
     }
 }
