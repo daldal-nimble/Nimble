@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.security.Keys
 import jakarta.annotation.PostConstruct
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
@@ -16,22 +17,15 @@ import java.util.*
 import java.util.stream.Collectors
 
 @Component
-class JwtTokenProvider {
+class JwtTokenProvider(
+
+) {
     private val AUTHORITIES_KEY = "auth"
-
-    //    private val BEARER_TYPE = "bearer"
-    private var ACCESS_TOKEN_VALIDITY_SECONDS: Long = 5 * 60 * 60
-    private var REFRESH_TOKEN_VALIDITY_SECONDS: Long = 6 * 60 * 60
-
-    private var secretKey = "daldalasfdsadfasdfsadflkjasfsadfsdafsdflkasjfklsdajfsdjldflksdjfaslkdjfsakljdsaflkasdjfsklad";
-
-    //    private var key: Key;
-//
-//    private val keyBytes: ByteArray = Decoders.BASE64.decode(secretKey)
-//    init {
-//        key = Keys.hmacShaKeyFor(keyBytes)
-//    }
     private lateinit var key: Key
+    private val ACCESS_TOKEN_VALIDITY_SECONDS: Long = 20 * 60 * 1000
+    private val REFRESH_TOKEN_VALIDITY_SECONDS: Long = 2 * 60 * 60 * 1000
+    @Value("\${jwt.secret.key}")
+    private lateinit var secretKey: String
 
     @PostConstruct
     protected fun init() {
