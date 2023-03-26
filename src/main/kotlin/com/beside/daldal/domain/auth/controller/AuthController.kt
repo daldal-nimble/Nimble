@@ -4,12 +4,12 @@ import com.beside.daldal.domain.auth.dto.TokenResponseDTO
 import com.beside.daldal.domain.auth.service.AuthService
 import com.beside.daldal.domain.member.dto.MemberLoginDTO
 import org.springframework.http.ResponseEntity
-import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 
-@Controller
+@RestController
 @RequestMapping("/api/v1/auth")
 class AuthController(
     private val authService: AuthService

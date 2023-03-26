@@ -26,7 +26,12 @@ class SecurityConfig(
     fun configure(): WebSecurityCustomizer {
         return WebSecurityCustomizer { web: WebSecurity ->
             web.ignoring().requestMatchers(
-                "/api/v1/auth/login" // 임시
+                "/api/v1/auth/login", // 임시,
+                "/swagger-ui.html",
+                "/swagger-ui/**",
+                "/v3/api-docs/**",
+                "/swagger/**",
+                "/swagger-resources/**"
             )
         }
     }
@@ -45,6 +50,7 @@ class SecurityConfig(
 
         http.authorizeHttpRequests { auth ->
             auth.requestMatchers("/api/v1/auth/login").permitAll()
+                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**").permitAll()
                 .anyRequest().authenticated()
         }.apply(JwtSecurityConfig(tokenProvider))
 
