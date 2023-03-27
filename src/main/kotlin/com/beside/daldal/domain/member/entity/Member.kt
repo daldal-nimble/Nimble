@@ -1,7 +1,9 @@
 package com.beside.daldal.domain.member.entity
 
+import com.beside.daldal.shared.entity.BaseTimeEntity
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
+import java.time.LocalDateTime
 
 @Document("member")
 class Member(
@@ -15,8 +17,11 @@ class Member(
 
     // role
     var authrity : Authority = Authority.ROLE_USER
-) {
+) : BaseTimeEntity() {
     enum class Authority {
         ROLE_USER, ROLE_ADMIN
+    }
+    fun delete(){
+        deletedAt = LocalDateTime.now()
     }
 }

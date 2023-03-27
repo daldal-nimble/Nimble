@@ -27,6 +27,7 @@ class SecurityConfig(
         return WebSecurityCustomizer { web: WebSecurity ->
             web.ignoring().requestMatchers(
                 "/api/v1/auth/login", // 임시,
+//                "/api/v1/auth/reissue",
                 "/swagger-ui.html",
                 "/swagger-ui/**",
                 "/v3/api-docs/**",

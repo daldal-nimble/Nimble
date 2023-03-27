@@ -38,7 +38,7 @@ class JwtTokenProvider(
         val authorities = authentication.authorities.stream()
             .map { obj: GrantedAuthority -> obj.authority }
             .collect(Collectors.joining(","))
-        val now = Date().time
+        val now = System.currentTimeMillis()
 
         // Access Token 생성
         val accessTokenExpiresIn: Date = Date(now + ACCESS_TOKEN_VALIDITY_SECONDS)
@@ -52,6 +52,8 @@ class JwtTokenProvider(
         // Refresh Token 생성
         val refreshTokenExpiresIn = Date(now + REFRESH_TOKEN_VALIDITY_SECONDS)
         val refreshToken = Jwts.builder()
+            .setSubject(authentication.name) // payload "sub": "name"
+            .claim(AUTHORITIES_KEY, authorities) // payload "auth": "ROLE_USER"
             .setExpiration(refreshTokenExpiresIn)
             .signWith(key, SignatureAlgorithm.HS512)
             .compact()
