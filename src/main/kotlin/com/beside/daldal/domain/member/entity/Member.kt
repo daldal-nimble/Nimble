@@ -9,14 +9,15 @@ import java.time.LocalDateTime
 class Member(
     @Id
     var id:String? = null,
-    var loginType: LoginType,
     var email: String,
+    var loginType: LoginType,
+    var authrity : Authority = Authority.ROLE_USER,
+    var isRun : MutableList<String> = mutableListOf(),
+    var isNotRun : MutableList<String> = mutableListOf(),
+
     var username :String? = null,
     var nickname :String? = null,
     var gender :String? = null,
-
-    // role
-    var authrity : Authority = Authority.ROLE_USER
 ) : BaseTimeEntity() {
     enum class Authority {
         ROLE_USER, ROLE_ADMIN
