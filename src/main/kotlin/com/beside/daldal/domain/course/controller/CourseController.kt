@@ -1,5 +1,6 @@
 package com.beside.daldal.domain.course.controller
 
+import com.beside.daldal.domain.course.dto.CourseComplexDTO
 import com.beside.daldal.domain.course.dto.CourseCreateDTO
 import com.beside.daldal.domain.course.dto.CourseReadDTO
 import com.beside.daldal.domain.course.dto.CourseUpdateDTO
@@ -19,7 +20,7 @@ class CourseController(
         ResponseEntity.ok(courseService.findById(courseId))
 
     @GetMapping("")
-    fun findMyCourses(principal: Principal):ResponseEntity<List<CourseReadDTO>>{
+    fun findMyCourses(principal: Principal):ResponseEntity<List<CourseComplexDTO>>{
         val email = principal.name
         return ResponseEntity.ok(courseService.findMyCourses(email))
     }

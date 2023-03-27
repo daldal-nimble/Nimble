@@ -1,5 +1,6 @@
 package com.beside.daldal.domain.course.service
 
+import com.beside.daldal.domain.course.dto.CourseComplexDTO
 import com.beside.daldal.domain.course.dto.CourseCreateDTO
 import com.beside.daldal.domain.course.dto.CourseReadDTO
 import com.beside.daldal.domain.course.dto.CourseUpdateDTO
@@ -23,16 +24,21 @@ class CourseService(
     }
 
     @Transactional(readOnly = true)
-    fun findMyCourses(email :String):List<CourseReadDTO>{
-        val memberId = memberRepository.findByEmail(email)?.id ?: throw MemberNotFoundException()
-        val courses = courseRepository.findAllByUserId(memberId)
-
+    fun findMyCourses(email :String):List<CourseComplexDTO>{
+        val member = memberRepository.findByEmail(email) ?: throw MemberNotFoundException()
+        val isRunCourse = courseRepository.findAllByIds(member.isRun)
+        val isNotRunCourse = courseRepository.findAllByIds(member.isNotRun)
         // 각각의 코스가 사용자가 뛰었는지 확인 할 수 있어야한다
-        
 
-        return courses.map { course-> CourseReadDTO.from(course) }
+        val result : MutableList<CourseComplexDTO> = mutableListOf()
+
+        for(course in isRunCourse)
+            result.add(CourseComplexDTO.from(course, true))
+        for(course in isNotRunCourse)
+            result.add(CourseComplexDTO.from(course, false))
+
+        return result
     }
-
 
     @Transactional
     fun delete(courseId: String) {
@@ -41,9 +47,16 @@ class CourseService(
 
     @Transactional
     fun create(email: String, dto: CourseCreateDTO): CourseReadDTO {
-        val memberId = memberRepository.findByEmail(email)?.id ?: throw MemberNotFoundException()
-        val course = dto.toEntity(memberId)
-        return CourseReadDTO.from(courseRepository.save(course))
+        val member = memberRepository.findByEmail(email) ?: throw MemberNotFoundException()
+        val memberId = member.id ?: throw MemberNotFoundException()
+        var course = dto.toEntity(memberId)
+
+        course = courseRepository.save(course)
+        val courseId = course.id ?: throw CourseNotFoundException()
+        member.isNotRun.add(courseId)
+        memberRepository.save(member)
+
+        return CourseReadDTO.from(course)
     }
 
     @Transactional
@@ -51,7 +64,9 @@ class CourseService(
         val memberId = memberRepository.findByEmail(email)?.id ?: throw MemberNotFoundException()
         val course = courseRepository.findById(dto.id).orElseThrow { throw CourseNotFoundException() }
 
-        if (memberId != course.userId) throw CourseAuthorizationException()
+        if(memberId != course.memberId)
+            throw CourseAuthorizationException()
+
         val newCourse = dto.toEntity()
         return CourseReadDTO.from(courseRepository.save(newCourse))
     }

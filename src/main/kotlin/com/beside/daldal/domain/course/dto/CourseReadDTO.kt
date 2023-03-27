@@ -6,7 +6,6 @@ import com.beside.daldal.domain.course.error.CourseNotFoundException
 class CourseReadDTO (
     val id :String,
     val name :String,
-    val userId : String,
     val points : List<Map<String, Any?>>
 ){
     companion object{
@@ -14,7 +13,6 @@ class CourseReadDTO (
             return CourseReadDTO(
                 id = entity.id ?:  throw CourseNotFoundException(),
                 name = entity.name,
-                userId = entity.userId,
                 points = entity.points
             )
         }
