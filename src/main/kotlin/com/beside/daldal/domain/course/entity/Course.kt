@@ -13,6 +13,7 @@ class Course(
     var distance : Long,// m 단위
     var duration: Duration,
     var points : List<Map<String, Any?>>,
+    var scarp:Long = 0,
 ){
 
     override fun toString(): String =

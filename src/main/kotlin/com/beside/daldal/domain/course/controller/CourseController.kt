@@ -45,4 +45,9 @@ class CourseController(
         val email = principal.name
         return ResponseEntity.ok(courseService.update(email, dto))
     }
+
+    @GetMapping("/popular")
+    fun popular() : ResponseEntity<List<CourseReadDTO>>{
+        return ResponseEntity.ok().body(courseService.popular())
+    }
 }
