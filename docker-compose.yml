@@ -9,4 +9,17 @@ services:
       - "name=redis"
       - "mode=standalone"
     ports:
-      - 6379:6379
+      - "16379:6379"
+    networks:
+      - daldal-net
+
+  web:
+    build: .
+    container_name: spring-server
+    ports:
+      - "12333:12333"
+    networks:
+      - daldal-net
+
+networks:
+  daldal-net:

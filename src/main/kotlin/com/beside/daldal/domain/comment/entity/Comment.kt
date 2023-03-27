@@ -13,4 +13,5 @@ class Comment(
     fun delete(){
         deletedAt = LocalDateTime.now()
     }
+    fun isDeleted():Boolean = deletedAt != null
 }
