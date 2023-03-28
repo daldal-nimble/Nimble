@@ -2,6 +2,7 @@ package com.beside.daldal.domain.review.service
 
 import com.beside.daldal.domain.member.error.MemberNotFoundException
 import com.beside.daldal.domain.member.repository.MemberRepository
+import com.beside.daldal.domain.review.dto.ReviewCreateDTO
 import com.beside.daldal.domain.review.dto.ReviewDTO
 import com.beside.daldal.domain.review.dto.ReviewReadDTO
 import com.beside.daldal.domain.review.dto.ReviewsDTO
@@ -31,7 +32,21 @@ class ReviewService(
         return ReviewReadDTO.from(review)
     }
 
+    @Transactional
+    fun createReview(email: String, courseId: String, dto: ReviewCreateDTO): ReviewDTO {
+        val member = memberRepository.findByEmail(email) ?: throw MemberNotFoundException()
+        val memberId = member.id ?: throw MemberNotFoundException()
+        val review = dto.toEntity(memberId, courseId)
+        reviewRepository.save(review)
+        return ReviewDTO.from(review)
+    }
+
+    @Transactional
+    fun deleteReview(reviewId: String) {
+        reviewRepository.deleteById(reviewId)
+    }
+
 //    @Transactional
-    // create review
+//    fun
 
 }
