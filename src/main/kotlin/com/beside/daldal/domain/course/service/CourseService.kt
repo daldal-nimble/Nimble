@@ -4,13 +4,14 @@ import com.beside.daldal.domain.course.dto.CourseComplexDTO
 import com.beside.daldal.domain.course.dto.CourseCreateDTO
 import com.beside.daldal.domain.course.dto.CourseReadDTO
 import com.beside.daldal.domain.course.dto.CourseUpdateDTO
+import com.beside.daldal.domain.course.entity.Course
 import com.beside.daldal.domain.course.error.CourseAuthorizationException
+import com.beside.daldal.domain.course.error.CourseExistAlreadyException
 import com.beside.daldal.domain.course.error.CourseNotFoundException
 import com.beside.daldal.domain.course.repository.CourseRepository
+import com.beside.daldal.domain.member.entity.Member
 import com.beside.daldal.domain.member.error.MemberNotFoundException
 import com.beside.daldal.domain.member.repository.MemberRepository
-import org.springframework.data.domain.Sort
-import org.springframework.data.mongodb.core.query.Query
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -78,4 +79,14 @@ class CourseService(
         .map { course -> CourseReadDTO.from(course) }
         .sortedByDescending { dto -> dto.scarp }
 
+    @Transactional
+    fun scrap(email: String, courseId: String){
+        val member : Member = memberRepository.findByEmail(email)?: throw MemberNotFoundException()
+        if(courseId in member.getCourseIds())
+            throw CourseExistAlreadyException()
+        if(!courseRepository.existsById(courseId))
+            throw CourseNotFoundException()
+        member.isNotRun.add(courseId)
+        memberRepository.save(member)
+    }
 }

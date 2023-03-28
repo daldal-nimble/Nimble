@@ -5,6 +5,7 @@ import com.beside.daldal.domain.course.dto.CourseCreateDTO
 import com.beside.daldal.domain.course.dto.CourseReadDTO
 import com.beside.daldal.domain.course.dto.CourseUpdateDTO
 import com.beside.daldal.domain.course.service.CourseService
+import com.beside.daldal.shared.dto.CommonResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.security.Principal
@@ -16,11 +17,11 @@ class CourseController(
 ) {
 
     @GetMapping("/{courseId}")
-    fun findById(@PathVariable courseId: String) : ResponseEntity<CourseReadDTO> =
+    fun findById(@PathVariable courseId: String): ResponseEntity<CourseReadDTO> =
         ResponseEntity.ok(courseService.findById(courseId))
 
     @GetMapping("")
-    fun findMyCourses(principal: Principal):ResponseEntity<List<CourseComplexDTO>>{
+    fun findMyCourses(principal: Principal): ResponseEntity<List<CourseComplexDTO>> {
         val email = principal.name
         return ResponseEntity.ok(courseService.findMyCourses(email))
     }
@@ -34,20 +35,34 @@ class CourseController(
     }
 
     @DeleteMapping("/{courseId}")
-    fun delete(@PathVariable("courseId") courseId: String
-    ) : ResponseEntity<String> {
+    fun delete(
+        @PathVariable("courseId") courseId: String
+    ): ResponseEntity<String> {
         courseService.delete(courseId)
         return ResponseEntity.ok(courseId)
     }
 
     @PutMapping("")
-    fun update(@RequestBody dto : CourseUpdateDTO, principal: Principal) : ResponseEntity<CourseReadDTO> {
+    fun update(@RequestBody dto: CourseUpdateDTO, principal: Principal): ResponseEntity<CourseReadDTO> {
         val email = principal.name
         return ResponseEntity.ok(courseService.update(email, dto))
     }
 
     @GetMapping("/popular")
-    fun popular() : ResponseEntity<List<CourseReadDTO>>{
+    fun popular(): ResponseEntity<List<CourseReadDTO>> {
         return ResponseEntity.ok().body(courseService.popular())
+    }
+
+    @PostMapping("/scrap/{courseId}")
+    fun scrap(@PathVariable courseId: String, principal: Principal): ResponseEntity<CommonResponse> {
+        val email: String = principal.name
+        courseService.scrap(email, courseId)
+        return ResponseEntity.ok(
+            CommonResponse(
+                message = "성공적으로 스크랩 했습니다.",
+                code = "SCRAP_SUCCESS",
+                status = 200
+            )
+        )
     }
 }
