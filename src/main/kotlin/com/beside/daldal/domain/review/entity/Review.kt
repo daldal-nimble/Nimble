@@ -15,9 +15,9 @@ class Review(
     var courseId: String,
     var content: String,
     var favorite : Long,
-    var features: List<ReviewFeature>,
     var imageUrl: String,
-    var ranAt: LocalDate,
+    var sentiment:ReviewSentiment = ReviewSentiment.MID,
+    var features: List<ReviewFeature>,
     var comments : List<Comment>
 ): BaseTimeEntity(){
     fun delete(){

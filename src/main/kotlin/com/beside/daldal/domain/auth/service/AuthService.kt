@@ -1,10 +1,13 @@
 package com.beside.daldal.domain.auth.service
 
+import com.beside.daldal.domain.auth.dto.LoginSuccessDTO
 import com.beside.daldal.domain.auth.dto.TokenResponseDTO
 import com.beside.daldal.domain.auth.error.BearerTokenIsNotRefreshToken
 import com.beside.daldal.domain.auth.error.JwtNotFoundException
 import com.beside.daldal.domain.member.dto.MemberCreateDTO
 import com.beside.daldal.domain.member.dto.MemberLoginDTO
+import com.beside.daldal.domain.member.dto.MemberReadDTO
+import com.beside.daldal.domain.member.error.MemberNotFoundException
 import com.beside.daldal.domain.member.repository.MemberRepository
 import com.beside.daldal.domain.member.service.MemberService
 import com.beside.daldal.jwt.JwtTokenProvider
@@ -22,11 +25,11 @@ class AuthService(
     private val stringRedisTemplate: StringRedisTemplate
 ) {
     @Transactional
-    fun login(dto: MemberLoginDTO): TokenResponseDTO {
-        val member = memberRepository.findByEmail(dto.email)
+    fun login(dto: MemberLoginDTO): LoginSuccessDTO {
+        var member = memberRepository.findByEmail(dto.email)
 
         if (member == null)
-            memberService.create(MemberCreateDTO(dto.loginType, dto.email))
+            member = memberService.create(MemberCreateDTO(dto.loginType, dto.email))
 
         val token =  jwtTokenProvider.generateTokenDto(
             UsernamePasswordAuthenticationToken(
@@ -36,7 +39,8 @@ class AuthService(
 
         val oper = stringRedisTemplate.opsForValue()
         oper[dto.email] = token.refreshToken
-        return token
+
+        return LoginSuccessDTO(token, MemberReadDTO.from(member))
     }
 
 

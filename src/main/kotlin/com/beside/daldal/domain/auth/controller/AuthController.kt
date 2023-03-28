@@ -1,5 +1,6 @@
 package com.beside.daldal.domain.auth.controller
 
+import com.beside.daldal.domain.auth.dto.LoginSuccessDTO
 import com.beside.daldal.domain.auth.dto.TokenResponseDTO
 import com.beside.daldal.domain.auth.error.JwtNotFoundException
 import com.beside.daldal.domain.auth.service.AuthService
@@ -22,7 +23,7 @@ class AuthController(
 ) {
 
     @PostMapping("/login")
-    fun login(@RequestBody dto: MemberLoginDTO): ResponseEntity<TokenResponseDTO> =
+    fun login(@RequestBody dto: MemberLoginDTO): ResponseEntity<LoginSuccessDTO> =
         ResponseEntity.ok(authService.login(dto))
 
     @PostMapping("/logout")

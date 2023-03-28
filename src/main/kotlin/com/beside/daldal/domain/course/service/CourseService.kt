@@ -4,9 +4,12 @@ import com.beside.daldal.domain.course.dto.CourseComplexDTO
 import com.beside.daldal.domain.course.dto.CourseCreateDTO
 import com.beside.daldal.domain.course.dto.CourseReadDTO
 import com.beside.daldal.domain.course.dto.CourseUpdateDTO
+import com.beside.daldal.domain.course.entity.Course
 import com.beside.daldal.domain.course.error.CourseAuthorizationException
+import com.beside.daldal.domain.course.error.CourseExistAlreadyException
 import com.beside.daldal.domain.course.error.CourseNotFoundException
 import com.beside.daldal.domain.course.repository.CourseRepository
+import com.beside.daldal.domain.member.entity.Member
 import com.beside.daldal.domain.member.error.MemberNotFoundException
 import com.beside.daldal.domain.member.repository.MemberRepository
 import org.springframework.stereotype.Service
@@ -24,19 +27,12 @@ class CourseService(
     }
 
     @Transactional(readOnly = true)
-    fun findMyCourses(email :String):List<CourseComplexDTO>{
+    fun findMyCourses(email: String): List<CourseComplexDTO> {
         val member = memberRepository.findByEmail(email) ?: throw MemberNotFoundException()
-        val isRunCourse = courseRepository.findAllByIds(member.isRun)
         val isNotRunCourse = courseRepository.findAllByIds(member.isNotRun)
-        // 각각의 코스가 사용자가 뛰었는지 확인 할 수 있어야한다
-
-        val result : MutableList<CourseComplexDTO> = mutableListOf()
-
-        for(course in isRunCourse)
-            result.add(CourseComplexDTO.from(course, true))
-        for(course in isNotRunCourse)
-            result.add(CourseComplexDTO.from(course, false))
-
+        val result: MutableList<CourseComplexDTO> = mutableListOf()
+        for (course in isNotRunCourse)
+            result.add(CourseComplexDTO.from(course))
         return result
     }
 
@@ -60,14 +56,14 @@ class CourseService(
     }
 
     @Transactional
-    fun update(email: String, dto: CourseUpdateDTO): CourseReadDTO {
+    fun update(email: String, courseId: String, dto: CourseUpdateDTO): CourseReadDTO {
         val memberId = memberRepository.findByEmail(email)?.id ?: throw MemberNotFoundException()
-        val course = courseRepository.findById(dto.id).orElseThrow { throw CourseNotFoundException() }
+        val course = courseRepository.findById(courseId).orElseThrow { throw CourseNotFoundException() }
 
-        if(memberId != course.memberId)
+        if (memberId != course.memberId)
             throw CourseAuthorizationException()
 
-        val newCourse = dto.toEntity()
+        val newCourse = dto.toEntity(courseId)
         return CourseReadDTO.from(courseRepository.save(newCourse))
     }
 }

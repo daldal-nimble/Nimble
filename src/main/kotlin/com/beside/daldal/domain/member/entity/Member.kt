@@ -25,4 +25,5 @@ class Member(
     fun delete(){
         deletedAt = LocalDateTime.now()
     }
+    fun  getCourseIds() : List<String> = isRun + isNotRun
 }

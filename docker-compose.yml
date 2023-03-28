@@ -14,7 +14,8 @@ services:
       - daldal-net
 
   web:
-    build: .
+#    build: .
+    image: rhlehfndvkd7557/daldal-web:2
     container_name: spring-server
     ports:
       - "12333:12333"
