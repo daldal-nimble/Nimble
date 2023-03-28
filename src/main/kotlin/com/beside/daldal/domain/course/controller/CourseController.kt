@@ -5,7 +5,6 @@ import com.beside.daldal.domain.course.dto.CourseCreateDTO
 import com.beside.daldal.domain.course.dto.CourseReadDTO
 import com.beside.daldal.domain.course.dto.CourseUpdateDTO
 import com.beside.daldal.domain.course.service.CourseService
-import com.beside.daldal.shared.dto.CommonResponse
 import com.beside.daldal.shared.exception.dto.ErrorCode
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.ArraySchema
@@ -57,7 +56,7 @@ class CourseController(
     @Operation(
         operationId = "findMyCourses",
         summary = "자신의 코스 조회하기",
-        description = "자신의 코스를 뛴 코스, 안뛴 코스로 구분되어 조회할 수 있습니다.",
+        description = "",
         tags = ["course"]
     )
     @ApiResponses(
@@ -164,73 +163,13 @@ class CourseController(
             ),
         ]
     )
-    @PutMapping("")
-    fun update(@RequestBody dto: CourseUpdateDTO, principal: Principal): ResponseEntity<CourseReadDTO> {
+    @PutMapping("/{courseId}")
+    fun update(
+        @RequestBody dto: CourseUpdateDTO,
+        @PathVariable("courseId") courseId: String,
+        principal: Principal
+    ): ResponseEntity<CourseReadDTO> {
         val email = principal.name
-        return ResponseEntity.ok(courseService.update(email, dto))
-    }
-
-    @Operation(
-        operationId = "popular",
-        summary = "인기 있는 코스를 9개 조회",
-        description = "스크랩 수가 높은 것을 기준으로 9개 조회합니다.",
-        tags = ["course"]
-    )
-    @ApiResponses(
-        value =
-        [
-            ApiResponse(
-                responseCode = "200",
-                description = "success",
-                content = [Content(
-                    mediaType = "application/json",
-                    array = ArraySchema(
-                        schema = Schema(
-                            implementation = CourseReadDTO::class
-                        )
-                    )
-                )]
-            ),
-        ]
-    )
-    @GetMapping("/popular")
-    fun popular(): ResponseEntity<List<CourseReadDTO>> {
-        return ResponseEntity.ok().body(courseService.popular())
-    }
-
-    @Operation(
-        operationId = "scrap",
-        summary = "course id를 이용해서 특정 코스를 스크랩합니다.",
-        description = "코스는 id를 기준으로 유일하게 존재해야합니다. 중복 course id 안됨",
-        tags = ["course"]
-    )
-    @ApiResponses(
-        value =
-        [
-            ApiResponse(
-                responseCode = "200",
-                description = "success",
-                content = [Content(
-                    mediaType = "application/json",
-                    array = ArraySchema(
-                        schema = Schema(
-                            implementation = CommonResponse::class
-                        )
-                    )
-                )]
-            ),
-        ]
-    )
-    @PostMapping("/scrap/{courseId}")
-    fun scrap(@PathVariable courseId: String, principal: Principal): ResponseEntity<CommonResponse> {
-        val email: String = principal.name
-        courseService.scrap(email, courseId)
-        return ResponseEntity.ok(
-            CommonResponse(
-                message = "성공적으로 스크랩 했습니다.",
-                code = "SCRAP_SUCCESS",
-                status = 200
-            )
-        )
+        return ResponseEntity.ok(courseService.update(email, courseId, dto))
     }
 }

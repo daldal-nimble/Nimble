@@ -5,12 +5,11 @@ import java.time.Duration
 
 class CourseCreateDTO (
     val name:String,
-    val memberId :String,
     val distance:Long,
-    val duration:Duration,
+    val duration:Long,
     val points : List<Map<String,Any?>>
 ){
-    fun toEntity(userId : String) : Course =
+    fun toEntity(memberId : String) : Course =
         Course(
             name = name,
             memberId = memberId,

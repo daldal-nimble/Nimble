@@ -29,17 +29,10 @@ class CourseService(
     @Transactional(readOnly = true)
     fun findMyCourses(email: String): List<CourseComplexDTO> {
         val member = memberRepository.findByEmail(email) ?: throw MemberNotFoundException()
-        val isRunCourse = courseRepository.findAllByIds(member.isRun)
         val isNotRunCourse = courseRepository.findAllByIds(member.isNotRun)
-        // 각각의 코스가 사용자가 뛰었는지 확인 할 수 있어야한다
-
         val result: MutableList<CourseComplexDTO> = mutableListOf()
-
-        for (course in isRunCourse)
-            result.add(CourseComplexDTO.from(course, true))
         for (course in isNotRunCourse)
-            result.add(CourseComplexDTO.from(course, false))
-
+            result.add(CourseComplexDTO.from(course))
         return result
     }
 
@@ -63,34 +56,14 @@ class CourseService(
     }
 
     @Transactional
-    fun update(email: String, dto: CourseUpdateDTO): CourseReadDTO {
+    fun update(email: String, courseId: String, dto: CourseUpdateDTO): CourseReadDTO {
         val memberId = memberRepository.findByEmail(email)?.id ?: throw MemberNotFoundException()
-        val course = courseRepository.findById(dto.id).orElseThrow { throw CourseNotFoundException() }
+        val course = courseRepository.findById(courseId).orElseThrow { throw CourseNotFoundException() }
 
         if (memberId != course.memberId)
             throw CourseAuthorizationException()
 
-        val newCourse = dto.toEntity()
+        val newCourse = dto.toEntity(courseId)
         return CourseReadDTO.from(courseRepository.save(newCourse))
-    }
-
-    @Transactional
-    fun popular(): List<CourseReadDTO> = courseRepository.findPopularCourse()
-        .map { course -> CourseReadDTO.from(course) }
-        .sortedByDescending { dto -> dto.scarp }
-
-    @Transactional
-    fun scrap(email: String, courseId: String){
-        val member : Member = memberRepository.findByEmail(email)?: throw MemberNotFoundException()
-
-        if(courseId in member.getCourseIds())
-            throw CourseExistAlreadyException()
-        val course: Course = courseRepository.findById(courseId).orElseThrow{throw CourseNotFoundException()}
-
-        member.isNotRun.add(courseId)
-        memberRepository.save(member)
-
-        course.scrapUp()
-        courseRepository.save(course)
     }
 }

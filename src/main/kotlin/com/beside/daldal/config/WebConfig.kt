@@ -8,7 +8,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 class WebConfig : WebMvcConfigurer{
     override fun addCorsMappings(registry: CorsRegistry) {
         registry.addMapping("/**")
-            .allowedOrigins("http://daldal.vercel.app")
+            .allowedOrigins("https://daldal.vercel.app", "http://localhost:3333")
             .allowedMethods("*")
             .maxAge(3000)
     }

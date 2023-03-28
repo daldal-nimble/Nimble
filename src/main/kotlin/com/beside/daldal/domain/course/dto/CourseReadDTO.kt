@@ -8,9 +8,8 @@ class CourseReadDTO (
     val id :String,
     val name :String,
     var distance : Long,// m 단위
-    var duration: Duration,
+    var duration: Long,
     var points : List<Map<String, Any?>>,
-    var scarp:Long = 0,
 ){
     companion object{
         fun from(entity : Course): CourseReadDTO {
@@ -20,7 +19,6 @@ class CourseReadDTO (
                 distance = entity.distance,
                 duration = entity.duration,
                 points = entity.points,
-                scarp = entity.scarp
             )
         }
     }
