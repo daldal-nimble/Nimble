@@ -1,9 +1,6 @@
 package com.beside.daldal.domain.review.controller
 
-import com.beside.daldal.domain.review.dto.ReviewCreateDTO
-import com.beside.daldal.domain.review.dto.ReviewDTO
-import com.beside.daldal.domain.review.dto.ReviewReadDTO
-import com.beside.daldal.domain.review.dto.ReviewsDTO
+import com.beside.daldal.domain.review.dto.*
 import com.beside.daldal.domain.review.service.ReviewService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -39,4 +36,13 @@ class ReviewController(
         return ResponseEntity.ok(reviewId)
     }
 
+    @PutMapping("/{reviewId}")
+    fun updateReview(
+        principal: Principal,
+        @PathVariable reviewId: String,
+        @RequestBody dto: ReviewUpdateDTO
+    ): ResponseEntity<ReviewDTO> {
+        val email = principal.name
+        return ResponseEntity.ok(reviewService.updateReview(email, reviewId, dto))
+    }
 }

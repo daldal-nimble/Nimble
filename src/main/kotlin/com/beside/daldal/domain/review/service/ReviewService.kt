@@ -2,10 +2,8 @@ package com.beside.daldal.domain.review.service
 
 import com.beside.daldal.domain.member.error.MemberNotFoundException
 import com.beside.daldal.domain.member.repository.MemberRepository
-import com.beside.daldal.domain.review.dto.ReviewCreateDTO
-import com.beside.daldal.domain.review.dto.ReviewDTO
-import com.beside.daldal.domain.review.dto.ReviewReadDTO
-import com.beside.daldal.domain.review.dto.ReviewsDTO
+import com.beside.daldal.domain.review.dto.*
+import com.beside.daldal.domain.review.error.ReviewAuthorizationException
 import com.beside.daldal.domain.review.repository.ReviewRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -46,7 +44,16 @@ class ReviewService(
         reviewRepository.deleteById(reviewId)
     }
 
-//    @Transactional
-//    fun
-
+    @Transactional
+    fun updateReview(email: String, reviewId: String, dto: ReviewUpdateDTO): ReviewDTO {
+        val member = memberRepository.findByEmail(email) ?: throw MemberNotFoundException()
+        val memberId = member.id ?: throw MemberNotFoundException()
+        val review = reviewRepository.findById(reviewId).orElseThrow { throw MemberNotFoundException() }
+        if (review.memberId != memberId)
+            throw ReviewAuthorizationException()
+        // createdAt이 변하면 안됨
+        review.update(dto)
+        reviewRepository.save(review)
+        return ReviewDTO.from(review)
+    }
 }
