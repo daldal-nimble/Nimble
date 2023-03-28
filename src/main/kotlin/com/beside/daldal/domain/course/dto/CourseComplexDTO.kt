@@ -8,16 +8,18 @@ class CourseComplexDTO(
     val name: String,
     val distance: Long,
     val duration: Long,
-    val points: List<Map<String, Any?>>
-) {
+    val points: List<Map<String, Any?>>,
+    val didRun: Boolean
+    ) {
     companion object {
-        fun from(entity: Course): CourseComplexDTO {
+        fun from(entity: Course, didRun: Boolean): CourseComplexDTO {
             return CourseComplexDTO(
                 id = entity.id ?: throw CourseNotFoundException(),
                 name = entity.name,
                 points = entity.points,
                 distance = entity.distance,
-                duration = entity.duration
+                duration = entity.duration,
+                didRun = didRun
             )
         }
     }
