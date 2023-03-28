@@ -16,7 +16,7 @@ class Review(
     var content: String,
     var favorite : Long,
     var imageUrl: String,
-    var sentiment:ReviewSentiment = ReviewSentiment.MID,
+    var sentiment:ReviewSentiment = ReviewSentiment.NEUTRAL,
     var features: List<ReviewFeature>,
     var comments : List<Comment>
 ): BaseTimeEntity(){
