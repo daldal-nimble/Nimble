@@ -3,6 +3,7 @@ package com.beside.daldal.domain.review.service
 import com.beside.daldal.domain.member.error.MemberNotFoundException
 import com.beside.daldal.domain.member.repository.MemberRepository
 import com.beside.daldal.domain.review.dto.ReviewDTO
+import com.beside.daldal.domain.review.dto.ReviewReadDTO
 import com.beside.daldal.domain.review.dto.ReviewsDTO
 import com.beside.daldal.domain.review.repository.ReviewRepository
 import org.springframework.stereotype.Service
@@ -25,8 +26,12 @@ class ReviewService(
     }
 
     @Transactional(readOnly = true)
-    fun findById(reviewId: String): ReviewDTO {
+    fun findById(reviewId: String): ReviewReadDTO {
         val review = reviewRepository.findById(reviewId).orElseThrow { throw MemberNotFoundException() }
-        return ReviewDTO.from(review)
+        return ReviewReadDTO.from(review)
     }
+
+//    @Transactional
+    // create review
+
 }
