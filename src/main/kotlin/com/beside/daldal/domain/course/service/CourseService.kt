@@ -82,11 +82,15 @@ class CourseService(
     @Transactional
     fun scrap(email: String, courseId: String){
         val member : Member = memberRepository.findByEmail(email)?: throw MemberNotFoundException()
+
         if(courseId in member.getCourseIds())
             throw CourseExistAlreadyException()
-        if(!courseRepository.existsById(courseId))
-            throw CourseNotFoundException()
+        val course: Course = courseRepository.findById(courseId).orElseThrow{throw CourseNotFoundException()}
+
         member.isNotRun.add(courseId)
         memberRepository.save(member)
+
+        course.scrapUp()
+        courseRepository.save(course)
     }
 }

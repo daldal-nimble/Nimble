@@ -18,4 +18,11 @@ class Course(
 
     override fun toString(): String =
         "Course(id=$id, memberId='$memberId', name='$name', distance=$distance, duration=$duration, points=$points)"
+
+    fun scrapUp(){
+        // 해당 동시성 제어는 단일 서버를 기준으로 동작합니다. 따라서 레플리카를 이용한 분산서버를 구현할 때에는 반드시 동시성 제어를 다시 구현해야합니다.
+        synchronized(this){
+            this.scarp += 1
+        }
+    }
 }
