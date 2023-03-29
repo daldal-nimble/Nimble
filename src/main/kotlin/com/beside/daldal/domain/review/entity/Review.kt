@@ -34,4 +34,16 @@ class Review(
     override fun toString(): String {
         return "Review(id=$id, memberId='$memberId', courseId='$courseId', content='$content', favorite=$favorite, imageUrl='$imageUrl', sentiment=$sentiment, features=$features, comments=$comments)"
     }
+
+    fun bookmarkUp() {
+        synchronized(this) {
+            bookmark += 1
+        }
+    }
+
+    fun bookmarkDown() {
+        synchronized(this) {
+            bookmark -= 1
+        }
+    }
 }

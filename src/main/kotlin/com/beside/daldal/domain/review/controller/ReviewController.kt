@@ -190,4 +190,5 @@ class ReviewController(
 
     @GetMapping("/popular")
     fun popular(): ResponseEntity<List<ReviewReadDTO>> = ResponseEntity.ok(reviewService.findPopularReview())
+
 }

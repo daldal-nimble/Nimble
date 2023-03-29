@@ -4,18 +4,20 @@ import com.beside.daldal.domain.image.error.ImageNotFoundException
 import com.beside.daldal.domain.image.service.ImageService
 import com.beside.daldal.domain.member.error.MemberNotFoundException
 import com.beside.daldal.domain.member.repository.MemberRepository
-import com.beside.daldal.domain.review.dto.*
+import com.beside.daldal.domain.review.dto.ReviewCreateDTO
+import com.beside.daldal.domain.review.dto.ReviewDTO
+import com.beside.daldal.domain.review.dto.ReviewReadDTO
+import com.beside.daldal.domain.review.dto.ReviewUpdateDTO
 import com.beside.daldal.domain.review.entity.Review
 import com.beside.daldal.domain.review.entity.ReviewSentiment
 import com.beside.daldal.domain.review.error.ReviewAuthorizationException
 import com.beside.daldal.domain.review.error.ReviewNotFoundException
 import com.beside.daldal.domain.review.repository.ReviewRepository
-import com.beside.daldal.domain.sentiment.dto.Document
 import com.beside.daldal.domain.sentiment.service.SentimentService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
-import java.util.UUID
+import java.util.*
 
 @Service
 class ReviewService(
@@ -117,4 +119,20 @@ class ReviewService(
     @Transactional(readOnly = true)
     fun findPopularReview(): List<ReviewReadDTO> =
         reviewRepository.findPopularReview().map { review -> ReviewReadDTO.from(review) }
+
+    @Transactional
+    fun bookmarkUp(reviewId: String): String {
+        val review = reviewRepository.findById(reviewId).orElseThrow { throw ReviewNotFoundException() }
+        review.bookmarkUp()
+        reviewRepository.save(review)
+        return reviewId
+    }
+
+    @Transactional
+    fun bookmarkDown(reviewId: String): String {
+        val review = reviewRepository.findById(reviewId).orElseThrow { throw ReviewNotFoundException() }
+        review.bookmarkDown()
+        reviewRepository.save(review)
+        return reviewId
+    }
 }
