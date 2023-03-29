@@ -4,6 +4,7 @@ import com.beside.daldal.domain.image.service.ImageService
 import com.beside.daldal.domain.member.error.MemberNotFoundException
 import com.beside.daldal.domain.member.repository.MemberRepository
 import com.beside.daldal.domain.review.dto.*
+import com.beside.daldal.domain.review.entity.Review
 import com.beside.daldal.domain.review.entity.ReviewSentiment
 import com.beside.daldal.domain.review.error.ReviewAuthorizationException
 import com.beside.daldal.domain.review.error.ReviewNotFoundException
@@ -65,19 +66,33 @@ class ReviewService(
 
     @Transactional
     fun deleteReview(reviewId: String) {
+        val review = reviewRepository.findById(reviewId).orElseThrow { throw ReviewNotFoundException() }
+        imageService.delete(review.imageUrl, "review")
         reviewRepository.deleteById(reviewId)
     }
 
     @Transactional
-    fun updateReview(email: String, reviewId: String, dto: ReviewUpdateDTO): ReviewDTO {
+    fun updateReview(
+        email: String,
+        reviewId: String,
+        dto: ReviewUpdateDTO,
+        file: MultipartFile
+    ): ReviewDTO {
         val member = memberRepository.findByEmail(email) ?: throw MemberNotFoundException()
         val memberId = member.id ?: throw MemberNotFoundException()
-        val review = reviewRepository.findById(reviewId).orElseThrow { throw MemberNotFoundException() }
+        val review: Review = reviewRepository.findById(reviewId).orElseThrow { throw MemberNotFoundException() }
         if (review.memberId != memberId)
             throw ReviewAuthorizationException()
-        // createdAt이 변하면 안됨
-        review.update(dto)
-        reviewRepository.save(review)
-        return ReviewDTO.from(review)
+
+        // 이미지가 있으면 바꾸고 없으면 기존 이미지를 그대로 사용
+        val imageUrl = if(file.isEmpty) imageService.upload(file, "review") else review.imageUrl
+
+        if (review.content != dto.content) {
+            val document = sentimentService.analyze(dto.content)
+            review.sentiment = ReviewSentiment.valueOf(document.sentiment)
+        }
+
+        val newReview = reviewRepository.save(dto.toEntity(review, imageUrl))
+        return ReviewDTO.from(newReview)
     }
 }

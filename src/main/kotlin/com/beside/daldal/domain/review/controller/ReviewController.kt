@@ -27,7 +27,7 @@ class ReviewController(
         principal: Principal,
         @PathVariable courseId: String,
         @RequestPart("dto") dto: ReviewCreateDTO,
-        @RequestPart("file") file : MultipartFile
+        @RequestPart("file") file: MultipartFile
     ): ResponseEntity<ReviewDTO> {
         return ResponseEntity.ok(reviewService.createReview(principal.name, courseId, dto, file))
     }
@@ -42,9 +42,10 @@ class ReviewController(
     fun updateReview(
         principal: Principal,
         @PathVariable reviewId: String,
-        @RequestBody dto: ReviewUpdateDTO
+        @RequestPart("dto") dto: ReviewUpdateDTO,
+        @RequestPart("file") file: MultipartFile
     ): ResponseEntity<ReviewDTO> {
         val email = principal.name
-        return ResponseEntity.ok(reviewService.updateReview(email, reviewId, dto))
+        return ResponseEntity.ok(reviewService.updateReview(email, reviewId, dto, file))
     }
 }

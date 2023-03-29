@@ -23,10 +23,4 @@ class Review(
     fun delete() {
         deletedAt = LocalDateTime.now()
     }
-
-    fun update(dto: ReviewUpdateDTO) {
-        content = dto.content
-        imageUrl = ""
-        features = dto.features.map { ReviewFeature.valueOf(it) }
-    }
 }

@@ -6,7 +6,7 @@ import com.beside.daldal.domain.review.entity.ReviewSentiment
 
 class ReviewCreateDTO(
     val content: String,
-    val features: List<String>
+    val features: List<ReviewFeature>
 ) {
     fun toEntity(memberId: String, courseId: String, imageUrl: String, sentiment: ReviewSentiment): Review {
         return Review(
@@ -16,7 +16,7 @@ class ReviewCreateDTO(
             imageUrl = imageUrl,
             sentiment = sentiment,
             // List<String> -> List<ReviewFeature>, ReviewFeature Enum
-            features = features.map { ReviewFeature.valueOf(it) },
+            features = features,
         )
     }
 }
