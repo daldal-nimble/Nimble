@@ -188,6 +188,12 @@ class ReviewController(
         return ResponseEntity.ok(reviewService.updateReview(email, reviewId, dto, file))
     }
 
+    @Operation(
+        operationId = "popular",
+        summary = "인기있는 리뷰를 9개 가지고 옵니다.",
+        description = "전체 리뷰중에서 인기 있는 리뷰를 가지고 옵니다.",
+        tags = ["review"]
+    )
     @GetMapping("/popular")
     fun popular(principal: Principal): ResponseEntity<List<ReviewReadDTO>> =
         ResponseEntity.ok(reviewService.findPopularReview(principal.name))
