@@ -23,11 +23,12 @@ class ImageService(private val s3: AmazonS3) {
 
     fun upload(
         multipartFile: MultipartFile,
-        prefix: String = ""
+        key : String,
+        prefix: String = "",
     ): String {
         if (!imageValidate(multipartFile)) throw ImageTypeException()
         try {
-            val originalName = "$prefix/${UUID.randomUUID()}-${multipartFile.originalFilename}" // 파일 이름
+            val originalName = "$prefix/daldal-${key}" // 파일 이름
             val size = multipartFile.size // 파일 크기
             val objectMetaData = ObjectMetadata()
             objectMetaData.contentType = multipartFile.contentType

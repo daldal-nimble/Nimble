@@ -1,5 +1,6 @@
 package com.beside.daldal.domain.review.service
 
+import com.beside.daldal.domain.image.error.ImageNotFoundException
 import com.beside.daldal.domain.image.service.ImageService
 import com.beside.daldal.domain.member.error.MemberNotFoundException
 import com.beside.daldal.domain.member.repository.MemberRepository
@@ -9,10 +10,12 @@ import com.beside.daldal.domain.review.entity.ReviewSentiment
 import com.beside.daldal.domain.review.error.ReviewAuthorizationException
 import com.beside.daldal.domain.review.error.ReviewNotFoundException
 import com.beside.daldal.domain.review.repository.ReviewRepository
+import com.beside.daldal.domain.sentiment.dto.Document
 import com.beside.daldal.domain.sentiment.service.SentimentService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
+import java.util.UUID
 
 @Service
 class ReviewService(
@@ -48,8 +51,12 @@ class ReviewService(
         val member = memberRepository.findByEmail(email) ?: throw MemberNotFoundException()
         val memberId = member.id ?: throw MemberNotFoundException()
 
+        // 파일 이름 정하기
+        val words = file.originalFilename?.split(".") ?: throw ImageNotFoundException()
+        val key = UUID.randomUUID().toString() + "." + words[words.lastIndex]
         // image upload
-        val imageUrl = imageService.upload(file, "review")
+        println(key)
+        val imageUrl = imageService.upload(file, key, "review")
 
         // sentiment 분석
         val document = sentimentService.analyze(dto.content)
@@ -67,7 +74,8 @@ class ReviewService(
     @Transactional
     fun deleteReview(reviewId: String) {
         val review = reviewRepository.findById(reviewId).orElseThrow { throw ReviewNotFoundException() }
-        imageService.delete(review.imageUrl, "review")
+        val words = review.imageUrl.split("/")
+        imageService.delete(words[words.lastIndex], "review")
         reviewRepository.deleteById(reviewId)
     }
 
@@ -80,19 +88,31 @@ class ReviewService(
     ): ReviewDTO {
         val member = memberRepository.findByEmail(email) ?: throw MemberNotFoundException()
         val memberId = member.id ?: throw MemberNotFoundException()
-        val review: Review = reviewRepository.findById(reviewId).orElseThrow { throw MemberNotFoundException() }
+        val review: Review = reviewRepository.findById(reviewId).orElseThrow { throw ReviewNotFoundException() }
         if (review.memberId != memberId)
             throw ReviewAuthorizationException()
 
-        // 이미지가 있으면 바꾸고 없으면 기존 이미지를 그대로 사용
-        val imageUrl = if(file.isEmpty) imageService.upload(file, "review") else review.imageUrl
+        val w = review.imageUrl.split("/")
+        val filename = w[w.lastIndex]
+        println(filename)
+        imageService.delete(filename, "review")
 
-        if (review.content != dto.content) {
-            val document = sentimentService.analyze(dto.content)
-            review.sentiment = ReviewSentiment.valueOf(document.sentiment)
-        }
+        // create file name
+        val words = file.originalFilename?.split(".") ?: throw ImageNotFoundException()
+        val key = UUID.randomUUID().toString() + "." + words[words.lastIndex]
 
-        val newReview = reviewRepository.save(dto.toEntity(review, imageUrl))
-        return ReviewDTO.from(newReview)
+
+        val imageUrl = imageService.upload(file, key, "review")
+        val sentiment: ReviewSentiment =
+            if (dto.content == review.content) ReviewSentiment.valueOf(sentimentService.analyze(dto.content).sentiment)
+            else review.sentiment
+
+        review.update(
+            content = dto.content,
+            features = dto.features,
+            imageUrl = imageUrl,
+            sentiment = sentiment
+        )
+        return ReviewDTO.from(reviewRepository.save(review))
     }
 }

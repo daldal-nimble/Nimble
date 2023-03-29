@@ -23,4 +23,15 @@ class Review(
     fun delete() {
         deletedAt = LocalDateTime.now()
     }
+
+    fun update(content : String, features: List<ReviewFeature>, imageUrl: String, sentiment: ReviewSentiment){
+        this.content = content
+        this.features = features
+        this.imageUrl = imageUrl
+        this.sentiment = sentiment
+    }
+
+    override fun toString(): String {
+        return "Review(id=$id, memberId='$memberId', courseId='$courseId', content='$content', favorite=$favorite, imageUrl='$imageUrl', sentiment=$sentiment, features=$features, comments=$comments)"
+    }
 }
