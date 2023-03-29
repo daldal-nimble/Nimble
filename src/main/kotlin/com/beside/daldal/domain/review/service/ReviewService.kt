@@ -1,5 +1,7 @@
 package com.beside.daldal.domain.review.service
 
+import com.beside.daldal.domain.course.error.CourseNotFoundException
+import com.beside.daldal.domain.course.repository.CourseRepository
 import com.beside.daldal.domain.image.error.ImageNotFoundException
 import com.beside.daldal.domain.image.service.ImageService
 import com.beside.daldal.domain.member.error.MemberNotFoundException
@@ -23,24 +25,29 @@ import java.util.*
 class ReviewService(
     private val memberRepository: MemberRepository,
     private val reviewRepository: ReviewRepository,
+    private val courseRepository: CourseRepository,
     private val imageService: ImageService,
     private val sentimentService: SentimentService
 ) {
     @Transactional(readOnly = true)
     fun findMyReview(email: String): MutableList<ReviewReadDTO> {
-        val memberId = memberRepository.findByEmail(email)?.id
-            ?: throw MemberNotFoundException()
+        val member = memberRepository.findByEmail(email) ?: throw MemberNotFoundException()
+        val memberId = member.id ?: throw MemberNotFoundException()
         val reviews = reviewRepository.findAllByMemberId(memberId)
         val result = mutableListOf<ReviewReadDTO>()
-        for (review in reviews)
-            result.add(ReviewReadDTO.from(review))
+        for (review in reviews) {
+            val course = courseRepository.findById(review.courseId).orElseThrow { throw CourseNotFoundException() }
+            result.add(ReviewReadDTO.from(review, course, member))
+        }
         return result
     }
 
     @Transactional(readOnly = true)
-    fun findById(reviewId: String): ReviewReadDTO {
+    fun findById(email: String, reviewId: String): ReviewReadDTO {
+        val member = memberRepository.findByEmail(email) ?: throw MemberNotFoundException()
         val review = reviewRepository.findById(reviewId).orElseThrow { throw ReviewNotFoundException() }
-        return ReviewReadDTO.from(review)
+        val course = courseRepository.findById(review.courseId).orElseThrow { throw CourseNotFoundException() }
+        return ReviewReadDTO.from(review, course, member)
     }
 
     @Transactional
@@ -117,7 +124,13 @@ class ReviewService(
     }
 
     @Transactional(readOnly = true)
-    fun findPopularReview(): List<ReviewReadDTO> =
-        reviewRepository.findPopularReview().map { review -> ReviewReadDTO.from(review) }
+    fun findPopularReview(email: String): List<ReviewReadDTO> {
+        val member = memberRepository.findByEmail(email) ?: throw MemberNotFoundException()
+
+        return reviewRepository.findPopularReview().map { review ->
+            val course = courseRepository.findById(review.courseId).orElseThrow { throw CourseNotFoundException() }
+            ReviewReadDTO.from(review, course, member)
+        }
+    }
 
 }

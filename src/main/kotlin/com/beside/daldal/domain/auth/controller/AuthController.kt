@@ -7,6 +7,7 @@ import com.beside.daldal.domain.auth.service.AuthService
 import com.beside.daldal.domain.member.dto.MemberLoginDTO
 import com.beside.daldal.domain.member.service.MemberService
 import com.beside.daldal.shared.dto.CommonResponse
+import io.swagger.v3.oas.annotations.Operation
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
@@ -22,10 +23,22 @@ class AuthController(
     private val memberService: MemberService
 ) {
 
+    @Operation(
+        operationId = "login",
+        summary = "로그인",
+        description = "로그인",
+        tags = ["auth"]
+    )
     @PostMapping("/login")
     fun login(@RequestBody dto: MemberLoginDTO): ResponseEntity<LoginSuccessDTO> =
         ResponseEntity.ok(authService.login(dto))
 
+    @Operation(
+        operationId = "logout",
+        summary = "로그아웃",
+        description = "로그아웃",
+        tags = ["auth"]
+    )
     @PostMapping("/logout")
     fun logout(principal: Principal, req: HttpServletRequest): ResponseEntity<CommonResponse> {
         val email = principal.name
@@ -33,6 +46,12 @@ class AuthController(
         return ResponseEntity.ok(CommonResponse(message = "logout success", code = "LOGOUT_SUCCESS", status = 200))
     }
 
+    @Operation(
+        operationId = "signOut",
+        summary = "회원 탈퇴",
+        description = "회원 탈퇴",
+        tags = ["auth"]
+    )
     @PostMapping("/signout")
     fun signOut(principal: Principal): ResponseEntity<CommonResponse> {
         val email = principal.name
@@ -46,6 +65,12 @@ class AuthController(
         )
     }
 
+    @Operation(
+        operationId = "reissue",
+        summary = "토큰 재발급",
+        description = "헤더에 refresh token을 넣으면 재발급 됩니다.",
+        tags = ["auth"]
+    )
     @PostMapping("/reissue")
     fun reissue(principal: Principal, req : HttpServletRequest): ResponseEntity<TokenResponseDTO> {
         val email = principal.name

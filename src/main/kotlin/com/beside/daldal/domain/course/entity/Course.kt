@@ -11,8 +11,22 @@ class Course(
     var name : String,
     var distance : Long,// m 단위
     var duration: Long,
+    var bookmark : Long = 0,
     var points : List<Map<String, Any?>>,
 ){
+
+    fun bookmarkUp(){
+        synchronized(this){
+            bookmark+=1
+        }
+    }
+    fun bookmarkDown(){
+        synchronized(this){
+            bookmark-=1
+        }
+    }
+
+
 
     override fun toString(): String =
         "Course(id=$id, memberId='$memberId', name='$name', distance=$distance, duration=$duration, points=$points)"

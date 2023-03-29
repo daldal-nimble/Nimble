@@ -77,7 +77,7 @@ class CourseController(
         ]
     )
     @GetMapping("")
-    fun findMyCourses(principal: Principal): ResponseEntity<List<CourseComplexDTO>> {
+    fun findMyCourses(principal: Principal): ResponseEntity<List<CourseReadDTO>> {
         val email = principal.name
         return ResponseEntity.ok(courseService.findMyCourses(email))
     }
