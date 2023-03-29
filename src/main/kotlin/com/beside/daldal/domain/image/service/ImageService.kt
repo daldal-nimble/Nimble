@@ -9,6 +9,7 @@ import com.beside.daldal.domain.image.error.ImageUploadFailException
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
+import java.util.UUID
 
 @Service
 class ImageService(private val s3: AmazonS3) {
@@ -23,7 +24,7 @@ class ImageService(private val s3: AmazonS3) {
         prefix: String = ""
     ): String {
         try {
-            val originalName = "$prefix/${multipartFile.originalFilename}" // 파일 이름
+            val originalName = "$prefix/${UUID.randomUUID()}-${multipartFile.originalFilename}" // 파일 이름
             val size = multipartFile.size // 파일 크기
             val objectMetaData = ObjectMetadata()
             objectMetaData.contentType = multipartFile.contentType

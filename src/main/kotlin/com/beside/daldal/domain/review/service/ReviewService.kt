@@ -1,18 +1,24 @@
 package com.beside.daldal.domain.review.service
 
+import com.beside.daldal.domain.image.service.ImageService
 import com.beside.daldal.domain.member.error.MemberNotFoundException
 import com.beside.daldal.domain.member.repository.MemberRepository
 import com.beside.daldal.domain.review.dto.*
+import com.beside.daldal.domain.review.entity.ReviewSentiment
 import com.beside.daldal.domain.review.error.ReviewAuthorizationException
 import com.beside.daldal.domain.review.error.ReviewNotFoundException
 import com.beside.daldal.domain.review.repository.ReviewRepository
+import com.beside.daldal.domain.sentiment.service.SentimentService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.multipart.MultipartFile
 
 @Service
 class ReviewService(
     private val memberRepository: MemberRepository,
-    private val reviewRepository: ReviewRepository
+    private val reviewRepository: ReviewRepository,
+    private val imageService: ImageService,
+    private val sentimentService: SentimentService
 ) {
     @Transactional(readOnly = true)
     fun findMyReview(email: String): ReviewsDTO {
@@ -32,10 +38,27 @@ class ReviewService(
     }
 
     @Transactional
-    fun createReview(email: String, courseId: String, dto: ReviewCreateDTO): ReviewDTO {
+    fun createReview(
+        email: String,
+        courseId: String,
+        dto: ReviewCreateDTO,
+        file: MultipartFile
+    ): ReviewDTO {
         val member = memberRepository.findByEmail(email) ?: throw MemberNotFoundException()
         val memberId = member.id ?: throw MemberNotFoundException()
-        val review = dto.toEntity(memberId, courseId)
+
+        // image upload
+        val imageUrl = imageService.upload(file, "review")
+
+        // sentiment 분석
+        val document = sentimentService.analyze(dto.content)
+
+        val review = dto.toEntity(
+            memberId,
+            courseId,
+            imageUrl,
+            ReviewSentiment.valueOf(document.sentiment.uppercase())
+        )
         reviewRepository.save(review)
         return ReviewDTO.from(review)
     }
