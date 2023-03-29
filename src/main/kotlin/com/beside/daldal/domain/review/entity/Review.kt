@@ -1,6 +1,7 @@
 package com.beside.daldal.domain.review.entity
 
 import com.beside.daldal.domain.comment.entity.Comment
+import com.beside.daldal.domain.comment.error.CommentNotFoundException
 import com.beside.daldal.shared.entity.BaseTimeEntity
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
@@ -51,4 +52,22 @@ class Review(
             comments = comments.plus(comment)
         }
     }
+
+    fun deleteComment(commentId: String) {
+        synchronized(this) {
+            comments = comments.minusElement(comments.find { it.id == commentId }?: throw CommentNotFoundException())
+        }
+    }
+
+    fun updateComment(commentId: String, content: String) {
+        synchronized(this) {
+            comments = comments.map {
+                if (it.id == commentId) {
+                    it.update(content)
+                }
+                it
+            }
+        }
+    }
+
 }

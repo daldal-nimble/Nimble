@@ -1,6 +1,8 @@
 package com.beside.daldal.domain.review.service
 
 
+import com.beside.daldal.domain.comment.dto.CommentDTO
+import com.beside.daldal.domain.comment.entity.Comment
 import com.beside.daldal.domain.course.error.CourseNotFoundException
 import com.beside.daldal.domain.course.repository.CourseRepository
 import com.beside.daldal.domain.image.error.ImageNotFoundException
@@ -135,13 +137,25 @@ class ReviewService(
     }
 
     @Transactional
-    fun addComment(email: String, reviewId: String, content: String) {
-        val memberId = memberRepository.findByEmail(email)?.id
-            ?: throw MemberNotFoundException()
+    fun addComment(reviewId: String, dto: CommentDTO) {
         val review = reviewRepository.findById(reviewId).orElseThrow { throw ReviewNotFoundException() }
         // add Comment to review
-        val comment = Comment(memberId = memberId, content = content)
+        val comment = Comment(dto.id,dto.memberId,dto.content)
         review.addComment(comment)
+        reviewRepository.save(review)
+    }
+
+    @Transactional
+    fun deleteComment(reviewId: String, commentId: String) {
+        val review = reviewRepository.findById(reviewId).orElseThrow { throw ReviewNotFoundException() }
+        review.deleteComment(commentId)
+        reviewRepository.save(review)
+    }
+
+    @Transactional
+    fun updateComment(reviewId: String, commentId: String, content: String) {
+        val review = reviewRepository.findById(reviewId).orElseThrow { throw ReviewNotFoundException() }
+        review.updateComment(commentId, content)
         reviewRepository.save(review)
     }
 

@@ -20,30 +20,33 @@ class CommentController(
     fun createComment(
         principal: Principal,
         @PathVariable reviewId: String,
-        dto: CommentCreateDTO
+        @RequestBody dto: CommentCreateDTO
     ): ResponseEntity<CommentDTO> {
         val commentDTO = commentService.createComment(principal.name, dto)
-        reviewService.addComment(principal.name, reviewId, commentDTO.content)
+        reviewService.addComment(reviewId, commentDTO)
         return ResponseEntity.ok(commentDTO)
     }
 
-    @DeleteMapping("/{commentId}")
+    @DeleteMapping("/{reviewId}/{commentId}")
     fun deleteComment(
         principal: Principal,
+        @PathVariable reviewId: String,
         @PathVariable commentId: String
     ): ResponseEntity<String> {
-//        this.getComment(principal.name, commentId)
+        reviewService.deleteComment(reviewId, commentId)
         commentService.deleteComment(commentId)
         return ResponseEntity.ok(commentId)
     }
 
-    @PutMapping("/{commentId}")
+    @PutMapping("/{reviewId}/{commentId}")
     fun updateComment(
         principal: Principal,
+        @PathVariable reviewId: String,
         @PathVariable commentId: String,
-        dto: CommentUpdateDTO
+        @RequestBody dto: CommentUpdateDTO
     ): ResponseEntity<CommentDTO> {
-        val commentDTO = commentService.updateComment(commentId, dto)
-        return ResponseEntity.ok(commentDTO)
+        val dto = commentService.updateComment(commentId, dto)
+        reviewService.updateComment(reviewId, commentId, dto.content)
+        return ResponseEntity.ok(dto)
     }
 }
