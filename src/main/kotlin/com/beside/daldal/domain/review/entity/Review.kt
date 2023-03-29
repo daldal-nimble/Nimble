@@ -14,7 +14,6 @@ class Review(
     var courseId: String,
     var content: String,
     var favorite: Long = 0,
-    var bookmark: Long = 0,
     var imageUrl: String,
     var sentiment: ReviewSentiment = ReviewSentiment.NEUTRAL,
     var features: List<ReviewFeature>,

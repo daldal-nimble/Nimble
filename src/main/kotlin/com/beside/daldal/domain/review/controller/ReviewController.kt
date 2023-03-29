@@ -81,8 +81,8 @@ class ReviewController(
         ]
     )
     @GetMapping("/{reviewId}")
-    fun findReviewById(@PathVariable reviewId: String): ResponseEntity<ReviewReadDTO> {
-        return ResponseEntity.ok(reviewService.findById(reviewId))
+    fun findReviewById(@PathVariable reviewId: String, principal: Principal): ResponseEntity<ReviewReadDTO> {
+        return ResponseEntity.ok(reviewService.findById(principal.name, reviewId))
     }
 
 
@@ -188,7 +188,14 @@ class ReviewController(
         return ResponseEntity.ok(reviewService.updateReview(email, reviewId, dto, file))
     }
 
+    @Operation(
+        operationId = "popular",
+        summary = "인기있는 리뷰를 9개 가지고 옵니다.",
+        description = "전체 리뷰중에서 인기 있는 리뷰를 가지고 옵니다.",
+        tags = ["review"]
+    )
     @GetMapping("/popular")
-    fun popular(): ResponseEntity<List<ReviewReadDTO>> = ResponseEntity.ok(reviewService.findPopularReview())
+    fun popular(principal: Principal): ResponseEntity<List<ReviewReadDTO>> =
+        ResponseEntity.ok(reviewService.findPopularReview(principal.name))
 
 }

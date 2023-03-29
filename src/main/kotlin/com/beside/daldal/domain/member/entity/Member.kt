@@ -12,8 +12,11 @@ class Member(
     var email: String,
     var loginType: LoginType,
     var authrity : Authority = Authority.ROLE_USER,
+
     var isRun : MutableList<String> = mutableListOf(),
     var isNotRun : MutableList<String> = mutableListOf(),
+    var bookmarked : MutableSet<String> = mutableSetOf(),
+    var favorite:MutableList<String> = mutableListOf(),
 
     var username :String? = null,
     var nickname :String? = null,
@@ -26,4 +29,20 @@ class Member(
         deletedAt = LocalDateTime.now()
     }
     fun  getCourseIds() : List<String> = isRun + isNotRun
+
+    fun favorite(reviewId : String){
+        favorite.add(reviewId)
+    }
+    fun unfavorite(reviewId : String){
+        favorite.remove(reviewId)
+    }
+
+    fun bookmarkUp(courseId: String) {
+        bookmarked.add(courseId)
+        isNotRun.add(courseId)
+    }
+    fun bookmarkDown(courseId: String){
+        bookmarked.remove(courseId)
+        isNotRun.remove(courseId)
+    }
 }

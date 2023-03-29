@@ -20,11 +20,14 @@ class FavouriteService(
 ) {
     @Transactional
     fun favouriteUp(email: String, reviewId: String): String {
-        val memberId = memberRepository.findByEmail(email)?.id ?: throw MemberNotFoundException()
+        val member = memberRepository.findByEmail(email) ?: throw MemberNotFoundException()
+        val memberId = member.id ?: throw MemberNotFoundException()
         val review: Review = reviewRepository.findById(reviewId).orElseThrow { throw ReviewNotFoundException() }
         if (favoriteRepository.existsByMemberIdAndReviewId(memberId, reviewId)) throw FavouriteAlreadyExistException()
         review.favoriteUp()
+        member.favorite(reviewId)
         reviewRepository.save(review)
+        memberRepository.save(member)
         return favoriteRepository.save(Favourite(memberId = memberId, reviewId = reviewId)).id
             ?: throw FavouriteNotFoundException()
     }
@@ -32,15 +35,18 @@ class FavouriteService(
 
     @Transactional
     fun favouriteDown(email: String, reviewId: String): String {
-        val memberId = memberRepository.findByEmail(email)?.id ?: throw MemberNotFoundException()
+        val member = memberRepository.findByEmail(email) ?: throw MemberNotFoundException()
+        val memberId = member.id ?: throw MemberNotFoundException()
         val review = reviewRepository.findById(reviewId).orElseThrow { throw ReviewNotFoundException() }
         val favoriteId =
             favoriteRepository.findByMemberIdAndReviewId(memberId, reviewId)?.id ?: throw FavouriteNotFoundException()
 
         // bookmark 가 있는 경우
         review.favoriteDown()
+        member.unfavorite(reviewId)
         favoriteRepository.deleteById(favoriteId)
         reviewRepository.save(review)
+        memberRepository.save(member)
         return favoriteId
     }
 }
