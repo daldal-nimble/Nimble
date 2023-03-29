@@ -25,13 +25,13 @@ class ReviewService(
     private val sentimentService: SentimentService
 ) {
     @Transactional(readOnly = true)
-    fun findMyReview(email: String): MutableList<ReviewDTO> {
+    fun findMyReview(email: String): MutableList<ReviewReadDTO> {
         val memberId = memberRepository.findByEmail(email)?.id
             ?: throw MemberNotFoundException()
         val reviews = reviewRepository.findAllByMemberId(memberId)
-        val result = mutableListOf<ReviewDTO>()
+        val result = mutableListOf<ReviewReadDTO>()
         for (review in reviews)
-            result.add(ReviewDTO.from(review))
+            result.add(ReviewReadDTO.from(review))
         return result
     }
 
@@ -113,4 +113,8 @@ class ReviewService(
         )
         return ReviewDTO.from(reviewRepository.save(review))
     }
+
+    @Transactional(readOnly = true)
+    fun findPopularReview(): List<ReviewReadDTO> =
+        reviewRepository.findPopularReview().map { review -> ReviewReadDTO.from(review) }
 }

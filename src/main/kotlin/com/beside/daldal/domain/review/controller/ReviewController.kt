@@ -1,6 +1,5 @@
 package com.beside.daldal.domain.review.controller
 
-import com.beside.daldal.domain.course.dto.CourseReadDTO
 import com.beside.daldal.domain.review.dto.*
 import com.beside.daldal.domain.review.service.ReviewService
 import com.beside.daldal.shared.exception.dto.ErrorCode
@@ -19,8 +18,37 @@ import java.security.Principal
 class ReviewController(
     private val reviewService: ReviewService
 ) {
+
+
+    @Operation(
+        operationId = "findMyReview",
+        summary = "내 리뷰 조회",
+        description = "내가 쓴 리뷰를 전체 조회합니다.",
+        tags = ["review"]
+    )
+    @ApiResponses(
+        value =
+        [
+            ApiResponse(
+                responseCode = "200",
+                description = "success",
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = ReviewDTO::class)
+                )]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "course, member not found exception",
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = ErrorCode::class)
+                )]
+            ),
+        ]
+    )
     @GetMapping("")
-    fun findMyReview(principal: Principal): ResponseEntity<List<ReviewDTO>> {
+    fun findMyReview(principal: Principal): ResponseEntity<List<ReviewReadDTO>> {
         return ResponseEntity.ok(reviewService.findMyReview(principal.name))
     }
 
@@ -56,10 +84,6 @@ class ReviewController(
     fun findReviewById(@PathVariable reviewId: String): ResponseEntity<ReviewReadDTO> {
         return ResponseEntity.ok(reviewService.findById(reviewId))
     }
-
-
-
-
 
 
     @Operation(
@@ -126,7 +150,6 @@ class ReviewController(
     }
 
 
-
     @Operation(
         operationId = "updateReview",
         summary = "리뷰 수정",
@@ -164,4 +187,7 @@ class ReviewController(
         val email = principal.name
         return ResponseEntity.ok(reviewService.updateReview(email, reviewId, dto, file))
     }
+
+    @GetMapping("/popular")
+    fun popular(): ResponseEntity<List<ReviewReadDTO>> = ResponseEntity.ok(reviewService.findPopularReview())
 }

@@ -1,7 +1,6 @@
 package com.beside.daldal.domain.review.entity
 
 import com.beside.daldal.domain.comment.entity.Comment
-import com.beside.daldal.domain.review.dto.ReviewUpdateDTO
 import com.beside.daldal.shared.entity.BaseTimeEntity
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
@@ -15,6 +14,7 @@ class Review(
     var courseId: String,
     var content: String,
     var favorite: Long = 0,
+    var bookmark: Long = 0,
     var imageUrl: String,
     var sentiment: ReviewSentiment = ReviewSentiment.NEUTRAL,
     var features: List<ReviewFeature>,
@@ -24,7 +24,7 @@ class Review(
         deletedAt = LocalDateTime.now()
     }
 
-    fun update(content : String, features: List<ReviewFeature>, imageUrl: String, sentiment: ReviewSentiment){
+    fun update(content: String, features: List<ReviewFeature>, imageUrl: String, sentiment: ReviewSentiment) {
         this.content = content
         this.features = features
         this.imageUrl = imageUrl

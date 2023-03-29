@@ -5,6 +5,6 @@ import org.springframework.data.mongodb.repository.MongoRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface ReviewRepository :MongoRepository<Review, String> {
+interface ReviewRepository :MongoRepository<Review, String>, CustomReviewDSL {
     fun findAllByMemberId(id: String) : List<Review>
 }
