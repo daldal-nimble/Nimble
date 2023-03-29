@@ -10,5 +10,12 @@ class CourseUpdateDTO(
     val duration: Long,
     val points: List<Map<String, Any?>>
 ) {
-    fun toEntity(courseId: String): Course = Course(courseId, name, memberId, distance, duration, points)
+    fun toEntity(courseId: String): Course = Course(
+        id = courseId,
+        name = name,
+        memberId = memberId,
+        distance = distance,
+        duration = duration,
+        points = points
+    )
 }

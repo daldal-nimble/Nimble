@@ -14,6 +14,7 @@ class Member(
     var authrity : Authority = Authority.ROLE_USER,
     var isRun : MutableList<String> = mutableListOf(),
     var isNotRun : MutableList<String> = mutableListOf(),
+    var bookmarked : MutableList<String> = mutableListOf(),
 
     var username :String? = null,
     var nickname :String? = null,
@@ -26,4 +27,12 @@ class Member(
         deletedAt = LocalDateTime.now()
     }
     fun  getCourseIds() : List<String> = isRun + isNotRun
+    fun bookmarkUp(courseId: String) {
+        bookmarked.add(courseId)
+        isNotRun.add(courseId)
+    }
+    fun bookmarkDown(courseId: String){
+        bookmarked.remove(courseId)
+        isNotRun.remove(courseId)
+    }
 }
