@@ -55,7 +55,6 @@ class ReviewService(
         val words = file.originalFilename?.split(".") ?: throw ImageNotFoundException()
         val key = UUID.randomUUID().toString() + "." + words[words.lastIndex]
         // image upload
-        println(key)
         val imageUrl = imageService.upload(file, key, "review")
 
         // sentiment 분석
@@ -94,7 +93,6 @@ class ReviewService(
 
         val w = review.imageUrl.split("/")
         val filename = w[w.lastIndex]
-        println(filename)
         imageService.delete(filename, "review")
 
         // create file name
