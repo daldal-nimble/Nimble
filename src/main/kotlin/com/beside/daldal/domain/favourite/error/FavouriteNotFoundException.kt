@@ -1,9 +1,9 @@
-package com.beside.daldal.domain.bookmark.error
+package com.beside.daldal.domain.favourite.error
 
 import com.beside.daldal.shared.exception.dto.DaldalRuntimeException
 import com.beside.daldal.shared.exception.dto.ErrorCode
 
-class BookmarkNotFoundException:DaldalRuntimeException(
+class FavouriteNotFoundException:DaldalRuntimeException(
     ErrorCode(
         message = "bookmark error",
         code = "BOOK_MARK_ERROR",

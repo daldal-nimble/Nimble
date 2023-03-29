@@ -120,19 +120,4 @@ class ReviewService(
     fun findPopularReview(): List<ReviewReadDTO> =
         reviewRepository.findPopularReview().map { review -> ReviewReadDTO.from(review) }
 
-    @Transactional
-    fun bookmarkUp(reviewId: String): String {
-        val review = reviewRepository.findById(reviewId).orElseThrow { throw ReviewNotFoundException() }
-        review.bookmarkUp()
-        reviewRepository.save(review)
-        return reviewId
-    }
-
-    @Transactional
-    fun bookmarkDown(reviewId: String): String {
-        val review = reviewRepository.findById(reviewId).orElseThrow { throw ReviewNotFoundException() }
-        review.bookmarkDown()
-        reviewRepository.save(review)
-        return reviewId
-    }
 }

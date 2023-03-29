@@ -35,15 +35,15 @@ class Review(
         return "Review(id=$id, memberId='$memberId', courseId='$courseId', content='$content', favorite=$favorite, imageUrl='$imageUrl', sentiment=$sentiment, features=$features, comments=$comments)"
     }
 
-    fun bookmarkUp() {
+    fun favoriteUp() {
         synchronized(this) {
-            bookmark += 1
+            favorite += 1
         }
     }
 
-    fun bookmarkDown() {
+    fun favoriteDown() {
         synchronized(this) {
-            bookmark -= 1
+            favorite -= 1
         }
     }
 }
