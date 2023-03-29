@@ -17,6 +17,8 @@ class BookmarkService(
         val member = memberRepository.findByEmail(email) ?: throw MemberNotFoundException()
         val course: Course = courseRepository.findById(courseId).orElseThrow { throw CourseNotFoundException() }
 
+        if(courseId in member.bookmarked) return courseId
+
         member.bookmarkUp(courseId)
         course.bookmarkUp()
 
@@ -29,8 +31,12 @@ class BookmarkService(
         val member = memberRepository.findByEmail(email) ?: throw MemberNotFoundException()
         val course: Course = courseRepository.findById(courseId).orElseThrow { throw CourseNotFoundException() }
 
+        if(courseId !in member.bookmarked) return courseId
         member.bookmarkDown(courseId)
         course.bookmarkDown()
+
+        memberRepository.save(member)
+        courseRepository.save(course)
         return courseId
     }
 }

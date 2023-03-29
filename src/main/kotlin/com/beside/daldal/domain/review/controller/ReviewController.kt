@@ -81,8 +81,8 @@ class ReviewController(
         ]
     )
     @GetMapping("/{reviewId}")
-    fun findReviewById(@PathVariable reviewId: String): ResponseEntity<ReviewReadDTO> {
-        return ResponseEntity.ok(reviewService.findById(reviewId))
+    fun findReviewById(@PathVariable reviewId: String, principal: Principal): ResponseEntity<ReviewReadDTO> {
+        return ResponseEntity.ok(reviewService.findById(principal.name, reviewId))
     }
 
 
@@ -189,6 +189,7 @@ class ReviewController(
     }
 
     @GetMapping("/popular")
-    fun popular(): ResponseEntity<List<ReviewReadDTO>> = ResponseEntity.ok(reviewService.findPopularReview())
+    fun popular(principal: Principal): ResponseEntity<List<ReviewReadDTO>> =
+        ResponseEntity.ok(reviewService.findPopularReview(principal.name))
 
 }
