@@ -14,4 +14,7 @@ class Comment(
         deletedAt = LocalDateTime.now()
     }
     fun isDeleted():Boolean = deletedAt != null
+    fun update(content: String) {
+        this.content = content
+    }
 }

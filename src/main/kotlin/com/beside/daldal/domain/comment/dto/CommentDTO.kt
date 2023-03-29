@@ -8,7 +8,7 @@ class CommentDTO (
     val content : String
 ){
     companion object {
-        fun of(comment: Comment) = CommentDTO(
+        fun from(comment: Comment) = CommentDTO(
             id = comment.id,
             memberId = comment.memberId,
             content = comment.content
