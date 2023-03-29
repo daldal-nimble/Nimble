@@ -19,6 +19,8 @@ repositories {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb:3.0.5")
     implementation("org.springframework.boot:spring-boot-starter-data-redis:3.0.5")
+    implementation("org.springframework.boot:spring-boot-starter-webflux:3.0.5")
+
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-web:3.0.5")
     implementation("org.springframework.boot:spring-boot-starter-validation:3.0.5")
@@ -34,6 +36,9 @@ dependencies {
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
 
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.4")
+    implementation("com.amazonaws:aws-java-sdk-s3:1.12.435")
+    implementation("javax.xml.bind:jaxb-api:2.4.0-b180830.0359")
+
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
