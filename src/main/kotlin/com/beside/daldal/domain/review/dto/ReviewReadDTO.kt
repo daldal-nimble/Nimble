@@ -29,7 +29,7 @@ class ReviewReadDTO(
                 features = review.features.map { it.name },
                 bookmark = review.bookmark,
                 imageUrl = review.imageUrl,
-                comments = review.comments.map { CommentDTO.of(it) }
+                comments = review.comments.map { CommentDTO.from(it) }
             )
         }
     }

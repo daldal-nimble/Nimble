@@ -46,4 +46,10 @@ class Review(
             favorite -= 1
         }
     }
+
+    fun addComment(comment: Comment) {
+        synchronized(this) {
+            comments = comments.plus(comment)
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package com.beside.daldal.domain.review.service
 
+import com.beside.daldal.domain.comment.entity.Comment
 import com.beside.daldal.domain.image.error.ImageNotFoundException
 import com.beside.daldal.domain.image.service.ImageService
 import com.beside.daldal.domain.member.error.MemberNotFoundException
@@ -119,5 +120,16 @@ class ReviewService(
     @Transactional(readOnly = true)
     fun findPopularReview(): List<ReviewReadDTO> =
         reviewRepository.findPopularReview().map { review -> ReviewReadDTO.from(review) }
+
+    @Transactional
+    fun addComment(email: String, reviewId: String, content: String) {
+        val memberId = memberRepository.findByEmail(email)?.id
+            ?: throw MemberNotFoundException()
+        val review = reviewRepository.findById(reviewId).orElseThrow { throw ReviewNotFoundException() }
+        // add Comment to review
+        val comment = Comment(memberId = memberId, content = content)
+        review.addComment(comment)
+        reviewRepository.save(review)
+    }
 
 }
