@@ -13,7 +13,7 @@ class ReviewController(
     private val reviewService: ReviewService
 ) {
     @GetMapping("")
-    fun findMyReview(principal: Principal): ResponseEntity<ReviewsDTO> {
+    fun findMyReview(principal: Principal): ResponseEntity<List<ReviewDTO>> {
         return ResponseEntity.ok(reviewService.findMyReview(principal.name))
     }
 
