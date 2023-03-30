@@ -23,6 +23,7 @@ import com.beside.daldal.domain.sentiment.service.SentimentService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
+import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
@@ -34,7 +35,7 @@ class ReviewService(
     private val reviewRepository: ReviewRepository,
     private val courseRepository: CourseRepository,
     private val imageService: ImageService,
-    private val sentimentService: SentimentService
+    private val sentimentService: SentimentService,
 ) {
     @Transactional(readOnly = true)
     fun findMyReview(email: String): MutableList<ReviewReadDTO> {
@@ -147,7 +148,6 @@ class ReviewService(
     @Transactional
     fun addComment(reviewId: String, dto: CommentDTO) {
         val review = reviewRepository.findById(reviewId).orElseThrow { throw ReviewNotFoundException() }
-        // add Comment to review
         val comment = Comment(dto.id, dto.memberId, dto.content)
         review.addComment(comment)
         reviewRepository.save(review)

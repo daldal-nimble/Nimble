@@ -119,8 +119,8 @@ class CommentController(
         @PathVariable commentId: String,
         @RequestBody dto: CommentUpdateDTO
     ): ResponseEntity<CommentDTO> {
-        val dto = commentService.updateComment(commentId, dto)
-        reviewService.updateComment(reviewId, commentId, dto.content)
-        return ResponseEntity.ok(dto)
+        val updated = commentService.updateComment(commentId, dto)
+        reviewService.updateComment(reviewId, commentId, updated.content)
+        return ResponseEntity.ok(updated)
     }
 }
