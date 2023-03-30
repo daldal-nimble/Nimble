@@ -145,8 +145,9 @@ class ReviewController(
         ]
     )
     @DeleteMapping("/{reviewId}")
-    fun deleteReview(@PathVariable reviewId: String): ResponseEntity<String> {
-        reviewService.deleteReview(reviewId)
+    fun deleteReview(@PathVariable reviewId: String, principal: Principal): ResponseEntity<String> {
+        val email : String = principal.name
+        reviewService.deleteReview(email, reviewId)
         return ResponseEntity.ok(reviewId)
     }
 

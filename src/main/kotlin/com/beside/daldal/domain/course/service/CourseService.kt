@@ -36,8 +36,13 @@ class CourseService(
     }
 
     @Transactional
-    fun delete(courseId: String) {
+    fun delete(email : String, courseId: String) {
+        val memberId = memberRepository.findByEmail(email)?.id ?: throw MemberNotFoundException()
+        val course = courseRepository.findById(courseId).orElseThrow { throw CourseNotFoundException() }
+        if(course.memberId == memberId)
+            throw CourseAuthorizationException()
         courseRepository.deleteById(courseId)
+        // 해당 부분은 리뷰의 데이터와도 연관되어 있기 때문에 어떻게 삭제할지 고민해야함.
     }
 
     @Transactional
@@ -62,7 +67,7 @@ class CourseService(
         if (memberId != course.memberId)
             throw CourseAuthorizationException()
 
-        val newCourse = dto.toEntity(courseId)
+        val newCourse = dto.toEntity(courseId, memberId)
         return CourseReadDTO.from(courseRepository.save(newCourse))
     }
 }
