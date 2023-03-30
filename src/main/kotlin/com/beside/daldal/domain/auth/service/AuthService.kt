@@ -7,7 +7,6 @@ import com.beside.daldal.domain.auth.error.JwtNotFoundException
 import com.beside.daldal.domain.member.dto.MemberCreateDTO
 import com.beside.daldal.domain.member.dto.MemberLoginDTO
 import com.beside.daldal.domain.member.dto.MemberReadDTO
-import com.beside.daldal.domain.member.error.MemberNotFoundException
 import com.beside.daldal.domain.member.repository.MemberRepository
 import com.beside.daldal.domain.member.service.MemberService
 import com.beside.daldal.jwt.JwtTokenProvider
