@@ -16,8 +16,7 @@ class MemberService(
 
     @Transactional
     fun deleteByEmail(email :String){
-        val member : Member = memberRepository.findByEmail(email) ?: throw MemberNotFoundException()
-        member.delete()
-        memberRepository.save(member)
+        val memberId : String = memberRepository.findByEmail(email)?.id ?: throw MemberNotFoundException()
+        memberRepository.deleteById(memberId)
     }
 }
