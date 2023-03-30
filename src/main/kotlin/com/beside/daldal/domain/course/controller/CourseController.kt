@@ -130,9 +130,11 @@ class CourseController(
     )
     @DeleteMapping("/{courseId}")
     fun delete(
+        principal: Principal,
         @PathVariable("courseId") courseId: String
     ): ResponseEntity<String> {
-        courseService.delete(courseId)
+        val email: String = principal.name
+        courseService.delete(email, courseId)
         return ResponseEntity.ok(courseId)
     }
 
