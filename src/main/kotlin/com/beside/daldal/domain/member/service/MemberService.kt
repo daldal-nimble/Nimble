@@ -19,7 +19,7 @@ class MemberService(
     private val memberRepository: MemberRepository,
     private val imageService: ImageService
 ) {
-    @Value("\${default.profile.image}")
+    @Value("\${default.profile.default.image}")
     private lateinit var defaultImageUrl: String
 
     @Transactional
