@@ -6,6 +6,8 @@ import com.beside.daldal.domain.comment.dto.CommentUpdateDTO
 import com.beside.daldal.domain.comment.service.CommentService
 import com.beside.daldal.domain.review.service.ReviewService
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.Parameters
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -20,12 +22,22 @@ class CommentController(
     private val commentService: CommentService,
     private val reviewService: ReviewService
 ) {
-    // swagger
     @Operation(
         operationId = "createComment",
         summary = "댓글 생성",
         description = "댓글을 생성합니다. 댓글을 생성하면 해당 리뷰에 댓글이 추가됩니다.",
         tags = ["comment"]
+    )
+    // request body에 대한 설명
+    @Parameters(
+        value = [
+            Parameter(
+                name = "dto",
+                description = "댓글 생성 정보",
+                required = true,
+                schema = Schema(implementation = CommentCreateDTO::class)
+            )
+        ]
     )
     @ApiResponses(
         value =

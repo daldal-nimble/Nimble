@@ -4,6 +4,8 @@ import com.beside.daldal.domain.review.dto.*
 import com.beside.daldal.domain.review.service.ReviewService
 import com.beside.daldal.shared.exception.dto.ErrorCode
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.Parameters
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -93,6 +95,22 @@ class ReviewController(
         description = "리뷰를 생성합니다. 해당 api는 form-data 형식으로 이미지를 넘겨주고 dto는 application/json으로 넘겨야 동작합니다.",
         tags = ["review"]
     )
+    @Parameters(
+        value = [
+            Parameter(
+                name = "dto",
+                description = "리뷰 생성 dto",
+                required = true,
+                schema = Schema(implementation = ReviewCreateDTO::class)
+            ),
+            Parameter(
+                name = "file",
+                description = "리뷰 이미지",
+                required = true,
+                schema = Schema(implementation = MultipartFile::class)
+            )
+        ]
+    )
     @ApiResponses(
         value =
         [
@@ -158,6 +176,22 @@ class ReviewController(
         description = "리뷰를 수정합니다. 해당 api는 form-data 형식으로 이미지를 넘겨주고 dto는 application/json으로 넘겨야 동작합니다.",
         tags = ["review"]
     )
+    @Parameters(
+        value = [
+            Parameter(
+                name = "dto",
+                description = "리뷰 생성 dto",
+                required = true,
+                schema = Schema(implementation = ReviewUpdateDTO::class)
+            ),
+            Parameter(
+                name = "file",
+                description = "리뷰 이미지",
+                required = true,
+                schema = Schema(implementation = MultipartFile::class)
+            )
+        ]
+    )
     @ApiResponses(
         value =
         [
@@ -206,6 +240,28 @@ class ReviewController(
         summary = "사용자가 원하는 필터링된 정보를 조회합니다.",
         description = "시간 순으로 내림차순으로 정렬되어 있고 page, size, features를 지정할 수 있습니다.",
         tags = ["review"]
+    )
+    @Parameters(
+        value = [
+            Parameter(
+                name = "dto",
+                description = "리뷰 필터링 dto",
+                required = true,
+                schema = Schema(implementation = ReviewSearchDTO::class)
+            ),
+            Parameter(
+                name = "size",
+                description = "한 페이지에 보여줄 리뷰의 수",
+                required = true,
+                schema = Schema(implementation = Int::class)
+            ),
+            Parameter(
+                name = "page",
+                description = "페이지 번호",
+                required = true,
+                schema = Schema(implementation = Int::class)
+            )
+        ]
     )
     @GetMapping("/filter")
     fun findAllByFiltering(
