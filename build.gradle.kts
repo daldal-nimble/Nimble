@@ -40,6 +40,16 @@ dependencies {
     implementation("com.amazonaws:aws-java-sdk-s3:1.12.435")
     implementation("javax.xml.bind:jaxb-api:2.4.0-b180830.0359")
 
+    // https://mvnrepository.com/artifact/io.kotest/kotest-assertions-core-jvm
+    testImplementation("io.kotest:kotest-assertions-core-jvm:5.5.5")
+    // https://mvnrepository.com/artifact/io.kotest/kotest-runner-junit5-jvm
+    testImplementation("io.kotest:kotest-runner-junit5-jvm:5.5.5")
+
+    // https://mvnrepository.com/artifact/io.mockk/mockk
+    testImplementation("io.mockk:mockk:1.13.4")
+    testImplementation("io.mockk:mockk-jvm:1.13.4")
+    testImplementation("io.mockk:mockk-agent-jvm:1.13.4")
+
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
