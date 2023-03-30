@@ -69,7 +69,7 @@ class CourseController(
                     mediaType = "application/json",
                     array = ArraySchema(
                         schema = Schema(
-                            implementation = CourseComplexDTO::class
+                            implementation = CourseReadDTO::class
                         )
                     )
                 )]
