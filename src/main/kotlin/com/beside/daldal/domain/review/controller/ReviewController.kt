@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
+import org.springframework.data.domain.Page
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
@@ -199,4 +200,21 @@ class ReviewController(
     fun popular(principal: Principal): ResponseEntity<List<ReviewReadDTO>> =
         ResponseEntity.ok(reviewService.findPopularReview(principal.name))
 
+
+    @Operation(
+        operationId = "filtering",
+        summary = "사용자가 원하는 필터링된 정보를 조회합니다.",
+        description = "시간 순으로 내림차순으로 정렬되어 있고 page, size, features를 지정할 수 있습니다.",
+        tags = ["review"]
+    )
+    @GetMapping("/filter")
+    fun findAllByFiltering(
+        principal: Principal,
+        @RequestBody dto: ReviewSearchDTO,
+        @RequestParam(name = "size", defaultValue = "9") size: Int,
+        @RequestParam(name = "page", defaultValue = "0") page: Int
+    ): Page<ReviewReadDTO> {
+        val email = principal.name
+        return reviewService.findAllByFiltering(email, dto.features, page, size)
+    }
 }

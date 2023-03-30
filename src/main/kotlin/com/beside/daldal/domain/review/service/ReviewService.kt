@@ -14,11 +14,15 @@ import com.beside.daldal.domain.review.dto.ReviewDTO
 import com.beside.daldal.domain.review.dto.ReviewReadDTO
 import com.beside.daldal.domain.review.dto.ReviewUpdateDTO
 import com.beside.daldal.domain.review.entity.Review
+import com.beside.daldal.domain.review.entity.ReviewFeature
 import com.beside.daldal.domain.review.entity.ReviewSentiment
 import com.beside.daldal.domain.review.error.ReviewAuthorizationException
 import com.beside.daldal.domain.review.error.ReviewNotFoundException
 import com.beside.daldal.domain.review.repository.ReviewRepository
 import com.beside.daldal.domain.sentiment.service.SentimentService
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
@@ -144,7 +148,7 @@ class ReviewService(
     fun addComment(reviewId: String, dto: CommentDTO) {
         val review = reviewRepository.findById(reviewId).orElseThrow { throw ReviewNotFoundException() }
         // add Comment to review
-        val comment = Comment(dto.id,dto.memberId,dto.content)
+        val comment = Comment(dto.id, dto.memberId, dto.content)
         review.addComment(comment)
         reviewRepository.save(review)
     }
@@ -163,4 +167,20 @@ class ReviewService(
         reviewRepository.save(review)
     }
 
+    @Transactional(readOnly = true)
+    fun findAllByFiltering(email: String, features: List<ReviewFeature>, page: Int, size: Int): Page<ReviewReadDTO> {
+        val member = memberRepository.findByEmail(email) ?: throw MemberNotFoundException()
+        val pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"))
+
+        val reviews = if (features.isEmpty()) {
+            reviewRepository.findAllByFilter(ReviewFeature.values().toList(), pageable)
+        } else {
+            reviewRepository.findAllByFilter(features, pageable)
+        }
+
+        return reviews.map { review ->
+            val course = courseRepository.findById(review.courseId).orElseThrow { throw CourseNotFoundException() }
+            ReviewReadDTO.from(review, course, member)
+        }
+    }
 }
