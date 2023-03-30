@@ -12,8 +12,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
-import org.springframework.web.cors.CorsConfiguration
-import org.springframework.web.cors.CorsConfigurationSource
 
 
 @Configuration
@@ -44,7 +42,7 @@ class SecurityConfig(
         http.csrf().disable()
         http.sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-
+        http.cors().disable()
         http.formLogin().disable()
         http.httpBasic().disable()
         http.exceptionHandling()

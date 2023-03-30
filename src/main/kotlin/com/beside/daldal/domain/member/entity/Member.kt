@@ -8,32 +8,36 @@ import java.time.LocalDateTime
 @Document("member")
 class Member(
     @Id
-    var id:String? = null,
+    var id: String? = null,
     var email: String,
     var loginType: LoginType,
-    var authrity : Authority = Authority.ROLE_USER,
+    var authrity: Authority = Authority.ROLE_USER,
 
-    var isRun : MutableList<String> = mutableListOf(),
-    var isNotRun : MutableList<String> = mutableListOf(),
-    var bookmarked : MutableSet<String> = mutableSetOf(),
-    var favorite:MutableList<String> = mutableListOf(),
+    var isRun: MutableList<String> = mutableListOf(),
+    var isNotRun: MutableList<String> = mutableListOf(),
+    var bookmarked: MutableSet<String> = mutableSetOf(),
+    var favorite: MutableList<String> = mutableListOf(),
 
-    var username :String? = null,
-    var nickname :String? = null,
-    var gender :String? = null,
+    var profileImageUrl: String,
+    var username: String? = null,
+    var nickname: String? = null,
+    var gender: Gender = Gender.UNKNOWN,
 ) : BaseTimeEntity() {
     enum class Authority {
         ROLE_USER, ROLE_ADMIN
     }
-    fun delete(){
+
+    fun delete() {
         deletedAt = LocalDateTime.now()
     }
-    fun  getCourseIds() : List<String> = isRun + isNotRun
 
-    fun favorite(reviewId : String){
+    fun getCourseIds(): List<String> = isRun + isNotRun
+
+    fun favorite(reviewId: String) {
         favorite.add(reviewId)
     }
-    fun unfavorite(reviewId : String){
+
+    fun unfavorite(reviewId: String) {
         favorite.remove(reviewId)
     }
 
@@ -41,8 +45,16 @@ class Member(
         bookmarked.add(courseId)
         isNotRun.add(courseId)
     }
-    fun bookmarkDown(courseId: String){
+
+    fun bookmarkDown(courseId: String) {
         bookmarked.remove(courseId)
         isNotRun.remove(courseId)
+    }
+
+    fun update(nickname: String?, username: String?, gender: Gender, imageUrl: String = this.profileImageUrl) {
+        this.nickname = nickname
+        this.username = username
+        this.gender = gender
+        this.profileImageUrl = imageUrl
     }
 }

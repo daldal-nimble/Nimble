@@ -7,9 +7,10 @@ class MemberCreateDTO(
     val loginType : LoginType,
     val email: String
 ){
-    fun toEntity()  : Member =
+    fun toEntity(imageUrl : String)  : Member =
         Member(
             email = email,
-            loginType = loginType
+            loginType = loginType,
+            profileImageUrl = imageUrl
         )
 }
