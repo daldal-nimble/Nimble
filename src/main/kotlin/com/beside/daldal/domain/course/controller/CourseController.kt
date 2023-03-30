@@ -1,6 +1,5 @@
 package com.beside.daldal.domain.course.controller
 
-import com.beside.daldal.domain.course.dto.CourseComplexDTO
 import com.beside.daldal.domain.course.dto.CourseCreateDTO
 import com.beside.daldal.domain.course.dto.CourseReadDTO
 import com.beside.daldal.domain.course.dto.CourseUpdateDTO
@@ -21,6 +20,28 @@ import java.security.Principal
 class CourseController(
     private val courseService: CourseService
 ) {
+    @Operation(
+        operationId = "randomCourse",
+        summary = "랜덤 코스 조회",
+        description = "인기 코스를 조회할 수 있습니다.",
+        tags = ["course"]
+    )
+    @ApiResponses(
+        value =
+        [
+            ApiResponse(
+                responseCode = "200",
+                description = "success",
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = CourseReadDTO::class)
+                )]
+            ),
+        ]
+    )
+    @GetMapping("/random")
+    fun findRandomCourse(): ResponseEntity<CourseReadDTO> =
+        ResponseEntity.ok(courseService.findPopularCourse())
 
     @Operation(
         operationId = "findById",
