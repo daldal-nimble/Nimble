@@ -83,8 +83,12 @@ class ReviewService(
     }
 
     @Transactional
-    fun deleteReview(reviewId: String) {
+    fun deleteReview(email : String, reviewId: String) {
         val review = reviewRepository.findById(reviewId).orElseThrow { throw ReviewNotFoundException() }
+        val memberId = memberRepository.findByEmail(email)?.id ?: throw MemberNotFoundException()
+        if(review.memberId != memberId)
+            throw ReviewAuthorizationException()
+
         val words = review.imageUrl.split("/")
         imageService.delete(words[words.lastIndex], "review")
         reviewRepository.deleteById(reviewId)
