@@ -35,7 +35,7 @@ class ReviewReadDTO(
                 imageUrl = review.imageUrl,
                 isFavorite = review.id in member.favorite,
                 isBookmarked = course.id in member.bookmarked,
-                comments = review.comments.map { CommentDTO.of(it) }
+                comments = review.comments.map { CommentDTO.from(it) }
             )
         }
     }
