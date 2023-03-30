@@ -24,7 +24,7 @@ class Review(
         deletedAt = LocalDateTime.now()
     }
 
-    fun update(content: String, features: List<ReviewFeature>, imageUrl: String, sentiment: ReviewSentiment) {
+    fun update(content: String, features: List<ReviewFeature>, imageUrl: String = this.imageUrl, sentiment: ReviewSentiment) {
         this.content = content
         this.features = features
         this.imageUrl = imageUrl

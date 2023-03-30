@@ -23,7 +23,6 @@ import com.beside.daldal.domain.sentiment.service.SentimentService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
-import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
@@ -88,10 +87,10 @@ class ReviewService(
     }
 
     @Transactional
-    fun deleteReview(email : String, reviewId: String) {
+    fun deleteReview(email: String, reviewId: String) {
         val review = reviewRepository.findById(reviewId).orElseThrow { throw ReviewNotFoundException() }
         val memberId = memberRepository.findByEmail(email)?.id ?: throw MemberNotFoundException()
-        if(review.memberId != memberId)
+        if (review.memberId != memberId)
             throw ReviewAuthorizationException()
 
         val words = review.imageUrl.split("/")
@@ -112,24 +111,54 @@ class ReviewService(
         if (review.memberId != memberId)
             throw ReviewAuthorizationException()
 
+        // 감정 분석
+        val sentiment: ReviewSentiment =
+            if (dto.content != review.content)
+                ReviewSentiment.valueOf(sentimentService.analyze(dto.content).sentiment.uppercase())
+            else
+                review.sentiment
+
+        // 이미지 삭제
         val w = review.imageUrl.split("/")
         val filename = w[w.lastIndex]
         imageService.delete(filename, "review")
 
-        // create file name
+        // 이미지 업로드
         val words = file.originalFilename?.split(".") ?: throw ImageNotFoundException()
         val key = UUID.randomUUID().toString() + "." + words[words.lastIndex]
-
-
         val imageUrl = imageService.upload(file, key, "review")
-        val sentiment: ReviewSentiment =
-            if (dto.content == review.content) ReviewSentiment.valueOf(sentimentService.analyze(dto.content).sentiment)
-            else review.sentiment
 
         review.update(
             content = dto.content,
             features = dto.features,
             imageUrl = imageUrl,
+            sentiment = sentiment
+        )
+        return ReviewDTO.from(reviewRepository.save(review))
+    }
+
+    @Transactional
+    fun updateReview(
+        email: String,
+        reviewId: String,
+        dto: ReviewUpdateDTO
+    ): ReviewDTO {
+        val member = memberRepository.findByEmail(email) ?: throw MemberNotFoundException()
+        val memberId = member.id ?: throw MemberNotFoundException()
+        val review: Review = reviewRepository.findById(reviewId).orElseThrow { throw ReviewNotFoundException() }
+        if (review.memberId != memberId)
+            throw ReviewAuthorizationException()
+
+        // 감정 분석
+        val sentiment: ReviewSentiment =
+            if (dto.content != review.content)
+                ReviewSentiment.valueOf(sentimentService.analyze(dto.content).sentiment.uppercase())
+            else
+                review.sentiment
+
+        review.update(
+            content = dto.content,
+            features = dto.features,
             sentiment = sentiment
         )
         return ReviewDTO.from(reviewRepository.save(review))

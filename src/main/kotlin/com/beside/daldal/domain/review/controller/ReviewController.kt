@@ -184,10 +184,14 @@ class ReviewController(
         principal: Principal,
         @PathVariable reviewId: String,
         @RequestPart("dto") dto: ReviewUpdateDTO,
-        @RequestPart("file") file: MultipartFile
+        @RequestPart("file") file: MultipartFile?
     ): ResponseEntity<ReviewDTO> {
         val email = principal.name
-        return ResponseEntity.ok(reviewService.updateReview(email, reviewId, dto, file))
+        return if(file != null){
+            ResponseEntity.ok(reviewService.updateReview(email, reviewId, dto, file))
+        }else{
+            ResponseEntity.ok(reviewService.updateReview(email, reviewId, dto))
+        }
     }
 
     @Operation(
