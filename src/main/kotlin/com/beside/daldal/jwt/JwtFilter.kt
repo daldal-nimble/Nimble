@@ -24,6 +24,7 @@ class JwtFilter(private var jwtTokenProvider: JwtTokenProvider) : OncePerRequest
             // 토큰으로부터 유저 정보를 받아옴
             val authentication = jwtTokenProvider.getAuthentication(token)
             // SecurityContext에 Authentication 객체를 저장
+
             SecurityContextHolder.getContext().authentication = authentication
         }
         filterChain.doFilter(request, response)
