@@ -74,7 +74,7 @@ class ReviewService(
         val imageUrl = imageService.upload(file, key, "review")
 
         // sentiment 분석
-        val document = sentimentService.analyze(dto.content)
+        val document = sentimentService.analyze(dto.content ?: "")
 
         val review = dto.toEntity(
             memberId,

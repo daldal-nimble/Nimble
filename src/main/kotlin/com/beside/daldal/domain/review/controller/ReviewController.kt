@@ -121,7 +121,18 @@ class ReviewController(
         @RequestPart("dto") dto: ReviewCreateDTO,
         @RequestPart("file") file: MultipartFile
     ): ResponseEntity<ReviewDTO> {
+        println(dto)
         return ResponseEntity.ok(reviewService.createReview(principal.name, courseId, dto, file))
+    }
+
+
+    @PostMapping("/with/modelattribute/{courseId}", consumes = ["multipart/form-data"])
+    fun createReviewWithModelAttribute(
+        principal: Principal,
+        @PathVariable courseId: String,
+        @ModelAttribute root: ReviewCreateRootDTO
+    ): ResponseEntity<ReviewDTO> {
+        return ResponseEntity.ok(reviewService.createReview(principal.name, courseId, root.dto, root.file))
     }
 
 
@@ -146,7 +157,7 @@ class ReviewController(
     )
     @DeleteMapping("/{reviewId}")
     fun deleteReview(@PathVariable reviewId: String, principal: Principal): ResponseEntity<String> {
-        val email : String = principal.name
+        val email: String = principal.name
         reviewService.deleteReview(email, reviewId)
         return ResponseEntity.ok(reviewId)
     }
@@ -187,9 +198,9 @@ class ReviewController(
         @RequestPart("file") file: MultipartFile?
     ): ResponseEntity<ReviewDTO> {
         val email = principal.name
-        return if(file != null){
+        return if (file != null) {
             ResponseEntity.ok(reviewService.updateReview(email, reviewId, dto, file))
-        }else{
+        } else {
             ResponseEntity.ok(reviewService.updateReview(email, reviewId, dto))
         }
     }
@@ -211,7 +222,7 @@ class ReviewController(
         description = "시간 순으로 내림차순으로 정렬되어 있고 page, size, features를 지정할 수 있습니다.",
         tags = ["review"]
     )
-    @GetMapping("/filter")
+    @PostMapping("/filter")
     fun findAllByFiltering(
         principal: Principal,
         @RequestBody dto: ReviewSearchDTO,

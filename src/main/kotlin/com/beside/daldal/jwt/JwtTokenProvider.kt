@@ -76,7 +76,9 @@ class JwtTokenProvider(
         // UserDetails 객체를 만들어서 Authentication 리턴
         val principal = User(claims.subject, "", authorities)
 
-        return UsernamePasswordAuthenticationToken(principal, accessToken, authorities)
+        val authentication = UsernamePasswordAuthenticationToken(principal, accessToken, authorities)
+//        authentication.isAuthenticated = true
+        return authentication
     }
 
 

@@ -4,6 +4,7 @@ import com.beside.daldal.jwt.JwtAccessDeniedHandler
 import com.beside.daldal.jwt.JwtAuthenticationEntryPoint
 import com.beside.daldal.jwt.JwtSecurityConfig
 import com.beside.daldal.jwt.JwtTokenProvider
+import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -21,7 +22,6 @@ class SecurityConfig(
     private val accessDeniedHandler: JwtAccessDeniedHandler,
     private val authenticationEntryPoint: JwtAuthenticationEntryPoint
 ) {
-
     @Bean
     fun configure(): WebSecurityCustomizer {
         return WebSecurityCustomizer { web: WebSecurity ->
