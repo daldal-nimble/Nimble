@@ -4,6 +4,7 @@ import com.beside.daldal.jwt.JwtAccessDeniedHandler
 import com.beside.daldal.jwt.JwtAuthenticationEntryPoint
 import com.beside.daldal.jwt.JwtSecurityConfig
 import com.beside.daldal.jwt.JwtTokenProvider
+import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -12,6 +13,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.CorsConfigurationSource
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
 
 @Configuration
@@ -21,7 +25,6 @@ class SecurityConfig(
     private val accessDeniedHandler: JwtAccessDeniedHandler,
     private val authenticationEntryPoint: JwtAuthenticationEntryPoint
 ) {
-
     @Bean
     fun configure(): WebSecurityCustomizer {
         return WebSecurityCustomizer { web: WebSecurity ->
@@ -43,6 +46,7 @@ class SecurityConfig(
         http.sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         http.cors()
+            .configurationSource(configurationSource())
         http.formLogin().disable()
         http.httpBasic().disable()
         http.exceptionHandling()
@@ -52,9 +56,21 @@ class SecurityConfig(
         http.authorizeHttpRequests { auth ->
             auth.requestMatchers("/api/v1/auth/login").permitAll()
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**").permitAll()
-                .anyRequest().authenticated()
+                .anyRequest().hasRole("USER")
         }.apply(JwtSecurityConfig(tokenProvider))
 
         return http.build()
+    }
+
+    @Bean
+    fun configurationSource(): CorsConfigurationSource {
+        val config = CorsConfiguration()
+        config.allowedOrigins = listOf("*")
+        config.allowedHeaders = listOf("*")
+        config.allowedMethods = listOf("*")
+//        config.allowCredentials = true
+        val source = UrlBasedCorsConfigurationSource()
+        source.registerCorsConfiguration("/**", config)
+        return source
     }
 }

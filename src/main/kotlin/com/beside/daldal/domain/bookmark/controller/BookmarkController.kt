@@ -2,12 +2,10 @@ package com.beside.daldal.domain.bookmark.controller
 
 import com.beside.daldal.domain.bookmark.service.BookmarkService
 import io.swagger.v3.oas.annotations.Operation
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.security.Principal
 
+//@CrossOrigin("*")
 @RestController
 @RequestMapping("/api/v1/bookmark")
 class BookmarkController(

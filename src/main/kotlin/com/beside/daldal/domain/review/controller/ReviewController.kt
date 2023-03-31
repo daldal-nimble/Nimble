@@ -3,6 +3,7 @@ package com.beside.daldal.domain.review.controller
 import com.beside.daldal.domain.review.dto.*
 import com.beside.daldal.domain.review.service.ReviewService
 import com.beside.daldal.shared.exception.dto.ErrorCode
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.Parameters
@@ -10,18 +11,27 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
+import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.WebDataBinder
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import java.security.Principal
 
+//@CrossOrigin("*")
 @RestController
 @RequestMapping("/api/v1/review")
 class ReviewController(
-    private val reviewService: ReviewService
+    private val reviewService: ReviewService,
+    private val objectMapper: ObjectMapper
 ) {
+    private val logger = LoggerFactory.getLogger(ReviewService::class.java)
 
+    @InitBinder
+    fun init(binder: WebDataBinder) {
+        binder.registerCustomEditor(ReviewCreateDTO::class.java, ReviewRootEditor(objectMapper))
+    }
 
     @Operation(
         operationId = "findMyReview",
@@ -132,14 +142,26 @@ class ReviewController(
             ),
         ]
     )
-    @PostMapping("/{courseId}", consumes = ["multipart/form-data"])
+    @PostMapping("/with/modelattribute/{courseId}", consumes = ["multipart/form-data"])
     fun createReview(
         principal: Principal,
         @PathVariable courseId: String,
         @RequestPart("dto") dto: ReviewCreateDTO,
         @RequestPart("file") file: MultipartFile
     ): ResponseEntity<ReviewDTO> {
+        println(dto)
         return ResponseEntity.ok(reviewService.createReview(principal.name, courseId, dto, file))
+    }
+
+
+    @PostMapping("/{courseId}", consumes = ["multipart/form-data"])
+    fun createReviewWithModelAttribute(
+        principal: Principal,
+        @PathVariable courseId: String,
+        @ModelAttribute root: ReviewCreateRootDTO
+    ): ResponseEntity<ReviewDTO> {
+        logger.info("${root}")
+        return ResponseEntity.ok(reviewService.createReview(principal.name, courseId, root.dto!!, root.file!!))
     }
 
 
@@ -164,7 +186,7 @@ class ReviewController(
     )
     @DeleteMapping("/{reviewId}")
     fun deleteReview(@PathVariable reviewId: String, principal: Principal): ResponseEntity<String> {
-        val email : String = principal.name
+        val email: String = principal.name
         reviewService.deleteReview(email, reviewId)
         return ResponseEntity.ok(reviewId)
     }
@@ -221,9 +243,9 @@ class ReviewController(
         @RequestPart("file") file: MultipartFile?
     ): ResponseEntity<ReviewDTO> {
         val email = principal.name
-        return if(file != null){
+        return if (file != null) {
             ResponseEntity.ok(reviewService.updateReview(email, reviewId, dto, file))
-        }else{
+        } else {
             ResponseEntity.ok(reviewService.updateReview(email, reviewId, dto))
         }
     }
@@ -267,7 +289,7 @@ class ReviewController(
             )
         ]
     )
-    @GetMapping("/filter")
+    @PostMapping("/filter")
     fun findAllByFiltering(
         principal: Principal,
         @RequestBody dto: ReviewSearchDTO,

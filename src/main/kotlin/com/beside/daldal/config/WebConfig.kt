@@ -12,12 +12,8 @@ class WebConfig : WebMvcConfigurer {
         registry.addMapping("/**")
             .allowedOrigins("*")
             .allowedMethods("*")
-            .allowedHeaders("*", "Authorization")
-            .maxAge(3000)
-        registry.addMapping("/api/v1/course/**")
-            .allowedOrigins("*")
-            .allowedMethods("*")
-            .allowedHeaders("*", "Authorization")
+            .allowedHeaders("*")
+//            .allowCredentials(true)
             .maxAge(3000)
     }
 }
