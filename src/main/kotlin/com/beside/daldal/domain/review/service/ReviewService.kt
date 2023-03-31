@@ -70,6 +70,9 @@ class ReviewService(
     ): ReviewDTO {
         logger.info("create review start")
         val member = memberRepository.findByEmail(email) ?: throw MemberNotFoundException()
+        if(!courseRepository.existsById(courseId))
+            throw CourseNotFoundException()
+
         val memberId = member.id ?: throw MemberNotFoundException()
 
         logger.info("image upload")

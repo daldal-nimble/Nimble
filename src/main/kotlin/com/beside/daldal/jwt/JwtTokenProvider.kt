@@ -22,8 +22,8 @@ class JwtTokenProvider(
 ) {
     private val AUTHORITIES_KEY = "auth"
     private lateinit var key: Key
-    private val ACCESS_TOKEN_VALIDITY_SECONDS: Long = 20 * 60 * 1000
-    private val REFRESH_TOKEN_VALIDITY_SECONDS: Long = 2 * 60 * 60 * 1000
+    private val ACCESS_TOKEN_VALIDITY_SECONDS: Long = 24 * 60 * 60 * 1000
+    private val REFRESH_TOKEN_VALIDITY_SECONDS: Long = 7 * 24 * 60 * 60 * 1000
     @Value("\${jwt.secret.key}")
     private lateinit var secretKey: String
 

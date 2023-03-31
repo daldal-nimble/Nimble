@@ -6,14 +6,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 
 //개발을 위해서 잠시 끄기
-//@Configuration
-//class WebConfig : WebMvcConfigurer {
-//    override fun addCorsMappings(registry: CorsRegistry) {
-//        registry.addMapping("/**")
-//            .allowedOrigins("*")
-//            .allowedMethods("*")
-//            .allowedHeaders("*")
-////            .allowCredentials(true)
-//            .maxAge(3000)
-//    }
-//}
+@Configuration
+class WebConfig : WebMvcConfigurer {
+    override fun addCorsMappings(registry: CorsRegistry) {
+        registry.addMapping("/**")
+            .allowedOrigins("*")
+            .allowedMethods("*")
+            .allowedHeaders("*")
+//            .allowCredentials(true)
+            .maxAge(3000)
+    }
+}

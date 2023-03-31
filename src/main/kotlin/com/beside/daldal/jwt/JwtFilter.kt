@@ -28,9 +28,11 @@ class JwtFilter(private val jwtTokenProvider: JwtTokenProvider) : OncePerRequest
             logger.info("$name : ${request.getHeader(name)}")
         }
         logger.info("===part===")
-        val parts = request.parts
-        for (part in parts) {
-            logger.info("${part.name} : ${part.size}")
+        if (request.contentType == "multipart/form-data") {
+            val parts = request.parts
+            for (part in parts) {
+                logger.info("${part.name} : ${part.size}")
+            }
         }
 
         // 유효한 토큰인지 확인

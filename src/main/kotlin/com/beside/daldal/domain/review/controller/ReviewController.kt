@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import java.security.Principal
 
-@CrossOrigin("*")
+//@CrossOrigin("*")
 @RestController
 @RequestMapping("/api/v1/review")
 class ReviewController(
@@ -124,7 +124,7 @@ class ReviewController(
             ),
         ]
     )
-    @PostMapping("/{courseId}", consumes = ["multipart/form-data"])
+    @PostMapping("/with/modelattribute/{courseId}", consumes = ["multipart/form-data"])
     fun createReview(
         principal: Principal,
         @PathVariable courseId: String,
@@ -136,7 +136,7 @@ class ReviewController(
     }
 
 
-    @PostMapping("/with/modelattribute/{courseId}", consumes = ["multipart/form-data"])
+    @PostMapping("/{courseId}", consumes = ["multipart/form-data"])
     fun createReviewWithModelAttribute(
         principal: Principal,
         @PathVariable courseId: String,

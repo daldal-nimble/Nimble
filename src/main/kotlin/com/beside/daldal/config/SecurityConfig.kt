@@ -45,7 +45,8 @@ class SecurityConfig(
         http.csrf().disable()
         http.sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//        http.cors().configurationSource(configurationSource())
+        http.cors()
+            .configurationSource(configurationSource())
         http.formLogin().disable()
         http.httpBasic().disable()
         http.exceptionHandling()
@@ -61,18 +62,15 @@ class SecurityConfig(
         return http.build()
     }
 
-//    @Bean
-//    fun configurationSource(): CorsConfigurationSource {
-//        val config = CorsConfiguration()
-//        config.allowedOrigins =
-//            listOf("http://localhost:3333", "https://daldal.vercel.app", "https://kr.object.ncloudstorage.com")
-//        config.allowedHeaders = listOf("*")
-//        config.allowedHeaders = listOf("*")
+    @Bean
+    fun configurationSource(): CorsConfigurationSource {
+        val config = CorsConfiguration()
+        config.allowedOrigins = listOf("*")
+        config.allowedHeaders = listOf("*")
+        config.allowedMethods = listOf("*")
 //        config.allowCredentials = true
-//        val source = UrlBasedCorsConfigurationSource()
-//        source.registerCorsConfiguration("/**", config)
-//        return source
-//    }
-
-
+        val source = UrlBasedCorsConfigurationSource()
+        source.registerCorsConfiguration("/**", config)
+        return source
+    }
 }
