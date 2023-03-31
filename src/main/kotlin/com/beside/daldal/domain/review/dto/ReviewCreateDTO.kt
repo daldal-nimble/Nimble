@@ -5,8 +5,8 @@ import com.beside.daldal.domain.review.entity.ReviewFeature
 import com.beside.daldal.domain.review.entity.ReviewSentiment
 
 class ReviewCreateDTO(
-    var content: String,
-    var features: List<ReviewFeature>
+    var content: String? = null,
+    var features: List<ReviewFeature>? = null
 ) {
 
     fun toEntity(memberId: String, courseId: String, imageUrl: String, sentiment: ReviewSentiment): Review {

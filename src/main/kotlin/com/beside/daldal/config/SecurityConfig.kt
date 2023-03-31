@@ -13,6 +13,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.CorsConfigurationSource
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
 
 @Configuration
@@ -42,7 +45,7 @@ class SecurityConfig(
         http.csrf().disable()
         http.sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        http.cors()
+//        http.cors().configurationSource(configurationSource())
         http.formLogin().disable()
         http.httpBasic().disable()
         http.exceptionHandling()
@@ -52,9 +55,24 @@ class SecurityConfig(
         http.authorizeHttpRequests { auth ->
             auth.requestMatchers("/api/v1/auth/login").permitAll()
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**").permitAll()
-                .anyRequest().authenticated()
+                .anyRequest().hasRole("USER")
         }.apply(JwtSecurityConfig(tokenProvider))
 
         return http.build()
     }
+
+//    @Bean
+//    fun configurationSource(): CorsConfigurationSource {
+//        val config = CorsConfiguration()
+//        config.allowedOrigins =
+//            listOf("http://localhost:3333", "https://daldal.vercel.app", "https://kr.object.ncloudstorage.com")
+//        config.allowedHeaders = listOf("*")
+//        config.allowedHeaders = listOf("*")
+//        config.allowCredentials = true
+//        val source = UrlBasedCorsConfigurationSource()
+//        source.registerCorsConfiguration("/**", config)
+//        return source
+//    }
+
+
 }

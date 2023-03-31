@@ -20,6 +20,7 @@ import com.beside.daldal.domain.review.error.ReviewAuthorizationException
 import com.beside.daldal.domain.review.error.ReviewNotFoundException
 import com.beside.daldal.domain.review.repository.ReviewRepository
 import com.beside.daldal.domain.sentiment.service.SentimentService
+import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
@@ -36,6 +37,9 @@ class ReviewService(
     private val imageService: ImageService,
     private val sentimentService: SentimentService,
 ) {
+
+    private val logger = LoggerFactory.getLogger(ReviewService::class.java)
+
     @Transactional(readOnly = true)
     fun findMyReview(email: String): MutableList<ReviewReadDTO> {
         val member = memberRepository.findByEmail(email) ?: throw MemberNotFoundException()
@@ -64,15 +68,18 @@ class ReviewService(
         dto: ReviewCreateDTO,
         file: MultipartFile
     ): ReviewDTO {
+        logger.info("create review start")
         val member = memberRepository.findByEmail(email) ?: throw MemberNotFoundException()
         val memberId = member.id ?: throw MemberNotFoundException()
 
+        logger.info("image upload")
         // 파일 이름 정하기
         val words = file.originalFilename?.split(".") ?: throw ImageNotFoundException()
         val key = UUID.randomUUID().toString() + "." + words[words.lastIndex]
         // image upload
         val imageUrl = imageService.upload(file, key, "review")
 
+        logger.info("sentiment analyze")
         // sentiment 분석
         val document = sentimentService.analyze(dto.content ?: "")
 
@@ -82,6 +89,8 @@ class ReviewService(
             imageUrl,
             ReviewSentiment.valueOf(document.sentiment.uppercase())
         )
+        logger.info("review save")
+
         reviewRepository.save(review)
         return ReviewDTO.from(review)
     }

@@ -5,6 +5,7 @@ import com.beside.daldal.domain.member.dto.ProfileUpdateDTO
 import com.beside.daldal.domain.member.service.MemberService
 import io.swagger.v3.oas.annotations.Operation
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 import java.security.Principal
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/api/v1/member")
 class MemberController(

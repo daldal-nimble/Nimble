@@ -3,23 +3,33 @@ package com.beside.daldal.domain.review.controller
 import com.beside.daldal.domain.review.dto.*
 import com.beside.daldal.domain.review.service.ReviewService
 import com.beside.daldal.shared.exception.dto.ErrorCode
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
+import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.WebDataBinder
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import java.security.Principal
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/api/v1/review")
 class ReviewController(
-    private val reviewService: ReviewService
+    private val reviewService: ReviewService,
+    private val objectMapper: ObjectMapper
 ) {
+    private val logger = LoggerFactory.getLogger(ReviewService::class.java)
 
+    @InitBinder
+    fun init(binder: WebDataBinder) {
+        binder.registerCustomEditor(ReviewCreateDTO::class.java, ReviewRootEditor(objectMapper))
+    }
 
     @Operation(
         operationId = "findMyReview",
@@ -132,7 +142,8 @@ class ReviewController(
         @PathVariable courseId: String,
         @ModelAttribute root: ReviewCreateRootDTO
     ): ResponseEntity<ReviewDTO> {
-        return ResponseEntity.ok(reviewService.createReview(principal.name, courseId, root.dto, root.file))
+        logger.info("${root}")
+        return ResponseEntity.ok(reviewService.createReview(principal.name, courseId, root.dto!!, root.file!!))
     }
 
 
