@@ -4,16 +4,8 @@ import com.beside.daldal.domain.member.dto.MemberReadDTO
 import com.beside.daldal.domain.member.dto.ProfileUpdateDTO
 import com.beside.daldal.domain.member.service.MemberService
 import io.swagger.v3.oas.annotations.Operation
-import io.swagger.v3.oas.annotations.Parameter
-import io.swagger.v3.oas.annotations.Parameters
-import io.swagger.v3.oas.annotations.media.Schema
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestPart
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import java.security.Principal
 
@@ -40,21 +32,7 @@ class MemberController(
         description = "이미지를 첨부하지 않는 경우 기존의 이미지가 그대로 사용됩니다.",
         tags = ["profile"]
     )
-    @Parameters(
-        Parameter(
-            name = "dto",
-            description = "프로필 업데이트 정보",
-            required = true,
-            schema = Schema(implementation = ProfileUpdateDTO::class)
-        ),
-        Parameter(
-            name = "file",
-            description = "프로필 이미지",
-            required = false,
-            schema = Schema(type = "file")
-        )
-    )
-    @PutMapping("/profile")
+    @PutMapping("/profile", consumes = ["multipart/form-data"])
     fun updateProfile(
         principal: Principal,
         @RequestPart("dto") dto: ProfileUpdateDTO,
