@@ -1,6 +1,7 @@
 package com.beside.daldal.domain.auth.controller
 
 import com.beside.daldal.domain.auth.dto.LoginSuccessDTO
+import com.beside.daldal.domain.auth.dto.ReissueRequestDTO
 import com.beside.daldal.domain.auth.dto.TokenResponseDTO
 import com.beside.daldal.domain.auth.error.JwtNotFoundException
 import com.beside.daldal.domain.auth.service.AuthService
@@ -70,13 +71,11 @@ class AuthController(
     @Operation(
         operationId = "reissue",
         summary = "토큰 재발급",
-        description = "헤더에 refresh token을 넣으면 재발급 됩니다.",
+        description = "합의된 리프레쉬 토큰과 시크릿 키를 입력으로 넣어줘야합니다.",
         tags = ["auth"]
     )
     @PostMapping("/reissue")
-    fun reissue(principal: Principal, req : HttpServletRequest): ResponseEntity<TokenResponseDTO> {
-        val email = principal.name
-        val bearer = req.getHeader("Authorization")
-        return ResponseEntity.ok(authService.reissue(email, bearer))
+    fun reissue(@RequestBody dto: ReissueRequestDTO): ResponseEntity<LoginSuccessDTO> {
+        return ResponseEntity.ok(authService.reissue(dto.refreshToken, dto.secretKey))
     }
 }
