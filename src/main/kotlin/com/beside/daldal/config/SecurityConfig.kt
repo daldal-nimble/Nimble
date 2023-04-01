@@ -65,7 +65,7 @@ class SecurityConfig(
     @Bean
     fun configurationSource(): CorsConfigurationSource {
         val config = CorsConfiguration()
-        config.allowedOrigins = listOf("*")
+        config.allowedOrigins = listOf("https://daldal.vercel.app", "https://kr.object.ncloudstorage.com")
         config.allowedHeaders = listOf("*")
         config.allowedMethods = listOf("*")
 //        config.allowCredentials = true
