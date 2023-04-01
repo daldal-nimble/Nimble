@@ -7,6 +7,7 @@ import com.beside.daldal.domain.course.error.CourseNotFoundException
 import com.beside.daldal.domain.course.repository.CourseRepository
 import com.beside.daldal.domain.image.error.ImageNotFoundException
 import com.beside.daldal.domain.image.service.ImageService
+import com.beside.daldal.domain.member.entity.Member
 import com.beside.daldal.domain.member.error.MemberNotFoundException
 import com.beside.daldal.domain.member.repository.MemberRepository
 import com.beside.daldal.domain.review.dto.ReviewCreateDTO
@@ -41,24 +42,26 @@ class ReviewService(
     private val logger = LoggerFactory.getLogger(ReviewService::class.java)
 
     @Transactional(readOnly = true)
-    fun findMyReview(email: String): MutableList<ReviewReadDTO> {
-        val member = memberRepository.findByEmail(email) ?: throw MemberNotFoundException()
-        val memberId = member.id ?: throw MemberNotFoundException()
+    fun findMyReview(email: String): List<ReviewReadDTO> {
+        val me = memberRepository.findByEmail(email) ?: throw MemberNotFoundException()
+        val memberId = me.id ?: throw MemberNotFoundException()
         val reviews = reviewRepository.findAllByMemberId(memberId)
         val result = mutableListOf<ReviewReadDTO>()
         for (review in reviews) {
             val course = courseRepository.findById(review.courseId).orElseThrow { throw CourseNotFoundException() }
-            result.add(ReviewReadDTO.from(review, course, member))
+            val creator : Member = memberRepository.findById(review.memberId).orElseThrow { throw MemberNotFoundException() }
+            result.add(ReviewReadDTO.from(review, course, me, creator))
         }
         return result
     }
 
     @Transactional(readOnly = true)
     fun findById(email: String, reviewId: String): ReviewReadDTO {
-        val member = memberRepository.findByEmail(email) ?: throw MemberNotFoundException()
+        val me = memberRepository.findByEmail(email) ?: throw MemberNotFoundException()
         val review = reviewRepository.findById(reviewId).orElseThrow { throw ReviewNotFoundException() }
         val course = courseRepository.findById(review.courseId).orElseThrow { throw CourseNotFoundException() }
-        return ReviewReadDTO.from(review, course, member)
+        val creator = memberRepository.findById(review.memberId).orElseThrow { throw MemberNotFoundException() }
+        return ReviewReadDTO.from(review, course, me, creator)
     }
 
     @Transactional
@@ -178,11 +181,12 @@ class ReviewService(
 
     @Transactional(readOnly = true)
     fun findPopularReview(email: String): List<ReviewReadDTO> {
-        val member = memberRepository.findByEmail(email) ?: throw MemberNotFoundException()
+        val me = memberRepository.findByEmail(email) ?: throw MemberNotFoundException()
 
         return reviewRepository.findPopularReview().map { review ->
             val course = courseRepository.findById(review.courseId).orElseThrow { throw CourseNotFoundException() }
-            ReviewReadDTO.from(review, course, member)
+            val creator = memberRepository.findById(review.memberId).orElseThrow { throw MemberNotFoundException() }
+            ReviewReadDTO.from(review, course, me, creator)
         }
     }
 
@@ -210,7 +214,7 @@ class ReviewService(
 
     @Transactional(readOnly = true)
     fun findAllByFiltering(email: String, features: List<ReviewFeature>, page: Int, size: Int): Page<ReviewReadDTO> {
-        val member = memberRepository.findByEmail(email) ?: throw MemberNotFoundException()
+        val me = memberRepository.findByEmail(email) ?: throw MemberNotFoundException()
         val pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"))
 
         val reviews = if (features.isEmpty()) {
@@ -221,7 +225,8 @@ class ReviewService(
 
         return reviews.map { review ->
             val course = courseRepository.findById(review.courseId).orElseThrow { throw CourseNotFoundException() }
-            ReviewReadDTO.from(review, course, member)
+            val creator = memberRepository.findById(review.memberId).orElseThrow { throw MemberNotFoundException() }
+            ReviewReadDTO.from(review, course, me, creator)
         }
     }
 }

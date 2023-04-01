@@ -10,6 +10,7 @@ class CourseReadDTO(
     val name: String,
     var distance: Long,// m 단위
     var duration: Long,
+    var bookamark : Long,
     var points: List<Map<String, Any?>>,
 ) : Serializable {
     companion object {
@@ -19,6 +20,7 @@ class CourseReadDTO(
                 name = entity.name,
                 distance = entity.distance,
                 duration = entity.duration,
+                bookamark =  entity.bookmark,
                 points = entity.points,
             )
         }
