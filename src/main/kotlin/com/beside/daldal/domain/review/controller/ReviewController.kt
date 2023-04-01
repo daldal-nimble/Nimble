@@ -149,20 +149,29 @@ class ReviewController(
         @RequestPart("dto") dto: ReviewCreateDTO,
         @RequestPart("file") file: MultipartFile
     ): ResponseEntity<ReviewDTO> {
-        println(dto)
+        logger.info("$dto")
         return ResponseEntity.ok(reviewService.createReview(principal.name, courseId, dto, file))
     }
 
 
     @PostMapping("/{courseId}", consumes = ["multipart/form-data"])
-    fun createReviewWithModelAttribute(
+    fun createReviewOrigin(
         principal: Principal,
         @PathVariable courseId: String,
-        @ModelAttribute root: ReviewCreateRootDTO
+        @RequestPart("dto") dto: ReviewCreateDTO,
+        @RequestPart("file") file: MultipartFile
     ): ResponseEntity<ReviewDTO> {
-        logger.info("${root}")
-        return ResponseEntity.ok(reviewService.createReview(principal.name, courseId, root.dto!!, root.file!!))
+        logger.info("$dto")
+        return ResponseEntity.ok(reviewService.createReview(principal.name, courseId, dto, file))
     }
+//    fun createReviewWithModelAttribute(
+//        principal: Principal,
+//        @PathVariable courseId: String,
+//        @ModelAttribute root: ReviewCreateRootDTO
+//    ): ResponseEntity<ReviewDTO> {
+//        logger.info("${root}")
+//        return ResponseEntity.ok(reviewService.createReview(principal.name, courseId, root.dto!!, root.file!!))
+//    }
 
 
     @Operation(
