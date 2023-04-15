@@ -7,7 +7,7 @@
 <img src="https://img.shields.io/badge/SpringBoot-3.0.4-blue">
 <img src="https://img.shields.io/badge/Gradle-7.6.1-blue">
 <img src="https://img.shields.io/badge/version-v1.0.0-blue">
-<img src="https://img.shields.io/badge/license-MIT-brightgreen.svg"/>
+<img src="https://img.shields.io/badge/license-Apache 2.0-brightgreen.svg"/>
 </p>
 
 <h1 align="center">나만의 러닝 코스를 설계, 리뷰, 공유하자!</h1><br/>
