@@ -10,7 +10,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 class WebConfig : WebMvcConfigurer {
     override fun addCorsMappings(registry: CorsRegistry) {
         registry.addMapping("/**")
-            .allowedOrigins("*")
+            .allowedOrigins("https://daldal.vercel.app", "https://kr.object.ncloudstorage.com")
             .allowedMethods("*")
             .allowedHeaders("*")
 //            .allowCredentials(true)

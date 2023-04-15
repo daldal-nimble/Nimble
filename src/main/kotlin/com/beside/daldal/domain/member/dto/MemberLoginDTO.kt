@@ -4,5 +4,6 @@ import com.beside.daldal.domain.member.entity.LoginType
 
 class MemberLoginDTO(
     val loginType: LoginType,
-    val email:String
+    val email: String,
+    val secretKey: String,
 )
